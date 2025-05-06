@@ -1,3 +1,8 @@
+const basic_endpoint = "http://127.0.0.1:8000/"
+const accounts_endpoint = "http://127.0.0.1:8000/accounts/"
+const stock_endpoint ="http://127.0.0.1:8000/stock/"
+const user_endpoint = "http://127.0.0.1:8000/user/"
+
 document.addEventListener("submit", async (e) => {
   e.preventDefault();
   const form = e.target;
@@ -7,7 +12,7 @@ document.addEventListener("submit", async (e) => {
       const password = form.password.value;
 
       try {
-          const response = await fetch("http://127.0.0.1:8000/accounts/login/", {
+          const response = await fetch(`${basic_endpoint}/login`,{
               method: "POST",
               headers: {
                   "Content-Type": "application/json"
@@ -36,7 +41,7 @@ document.addEventListener("submit", async (e) => {
       const last_name = form.last_name.value;
 
       try {
-          const response = await fetch("http://127.0.0.1:8000/create/", {
+          const response = await fetch(`${accounts_endpoint}/create`, {
               method: "POST",
               headers: {
                   "Content-Type": "application/json"
@@ -47,7 +52,7 @@ document.addEventListener("submit", async (e) => {
           if (response.ok) {
               const data = await response.json();
               console.log("Inscription réussie :", data);
-              window.location.href = "/pages/dashboard.html";
+              window.location.href = "/pages/welcome.html";
           } else {
               const errorData = await response.json();
               alert("Échec de l'inscription : " + (errorData.detail || "Identifiants invalides."));
@@ -58,3 +63,26 @@ document.addEventListener("submit", async (e) => {
       }
   }
 });
+
+// Simulation d’un appel API
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      // ⚠️ À remplacer par ton vrai endpoint
+      const response = await fetch("https://api.tondomaine.com/user/me", {
+        headers: {
+          "Authorization": "Bearer VOTRE_TOKEN_ICY"
+        }
+      });
+  
+      const data = await response.json();
+      document.getElementById("user-name").textContent = data.first_name || "Utilisateur";
+      
+      // facultatif : charger une vraie photo si dispo
+      if (data.profile_photo_url) {
+        document.getElementById("user-photo").src = data.profile_photo_url;
+      }
+    } catch (error) {
+      console.error("Erreur lors du chargement de l'utilisateur", error);
+    }
+  });
+  

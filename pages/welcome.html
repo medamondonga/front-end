@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bienvenue</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#ED7B01',
+                        darkblue: '#1C236B',
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+    <div class="bg-white shadow-lg rounded-xl p-10 w-full max-w-2xl text-center space-y-8">
+
+        <!-- Logo -->
+        <div class="flex justify-start">
+            <img src="/images/logo_trans.png" alt="Logo" class="w-40 h-auto">
+        </div>
+
+        <!-- Photo de profil + bouton ajouter -->
+        <div class="relative w-32 h-32 mx-auto">
+            <img id="profile-pic" src="/images/avatar.png" alt="Profil"
+                class="rounded-full w-full h-full object-cover border-4 border-darkblue">
+
+            <!-- Bouton ajouter -->
+            <label for="upload"
+                class="absolute bottom-0 right-0 bg-primary w-9 h-9 rounded-full flex items-center justify-center text-white text-xl cursor-pointer hover:bg-orange-600 shadow">
+                +
+            </label>
+            <input type="file" id="upload" accept="image/*" class="hidden" onchange="previewProfile(this)">
+        </div>
+
+        <!-- Message Bienvenue -->
+        <h1 class="text-2xl font-semibold text-darkblue">
+            Bienvenue <span id="username">Utilisateur</span>
+        </h1>
+
+        <!-- Bouton Créer une boutique -->
+        <button onclick="window.location.href='create_store.html'"
+            class="bg-primary hover:bg-orange-600 text-white px-6 py-3 rounded-lg text-lg font-medium transition duration-200">
+            Créer une boutique
+        </button>
+
+    </div>
+
+    <script src="/js/main.js"></script>
+</body>
+
+</html>
