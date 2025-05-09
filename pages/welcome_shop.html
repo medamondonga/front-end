@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bienvenue Boutique</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#ED7B01',
+            darkblue: '#1C236B',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-100 font-sans flex items-center justify-center min-h-screen">
+
+  <div class="h-dvh bg-white rounded-2xl shadow-xl w-full max-w-3xl p-6 sm:p-10 text-center relative">
+
+    <!-- Logo de l'application -->
+    <div class="pt-7 flex justify-start">
+        <img src="/images/logo_trans.png" alt="Logo" class="w-40 h-auto">
+    </div>
+
+
+    <!-- Titre de bienvenue (nom utilisateur) -->
+    <h2 id="user-name"
+        class="text-2xl sm:text-3xl font-bold text-darkblue mb-10 sm:mb-12 block sm:hidden">
+      Bienvenue, Utilisateur
+    </h2>
+
+    <!-- Partie utilisateur et boutique (masquée sur mobile) -->
+    <div class="mt-24 hidden sm:flex justify-center items-center gap-12 mb-12">
+      <!-- Utilisateur -->
+      <div class="flex flex-col items-center">
+        <img id="user-photo" src="/images/avatar.png"
+             class="w-24 h-24 rounded-full border-4 border-darkblue object-cover mb-2" />
+        <p id="user-name-desktop" class="text-lg text-darkblue font-semibold">Utilisateur</p>
+      </div>
+
+      <!-- Flèche -->
+      <div class="text-3xl text-gray-400">
+        ⬌
+      </div>
+
+      <!-- Boutique -->
+      <div class="flex flex-col items-center">
+        <img id="shop-logo" src="/images/OIP.jpeg"
+             class="w-24 h-24 rounded-full border-4 border-primary object-cover mb-2" />
+        <p id="shop-name" class="text-lg text-primary font-semibold">Ma boutique</p>
+      </div>
+    </div>
+
+    <!-- Mobile version: uniquement boutique -->
+    <div class="flex sm:hidden flex-col items-center mb-10">
+
+      <img id="shop-logo-mobile" src="/images/OIP.jpeg"
+           class="w-24 h-24 rounded-full border-4 border-primary object-cover mb-2" />
+      <p id="shop-name-mobile" class="text-lg text-primary font-semibold">Ma boutique</p>
+    </div>
+
+    <!-- Bouton principal -->
+    <button onclick="window.location.href='create-point-de-vente.html'"
+            class="bg-primary hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-lg font-semibold shadow-md transition">
+      Ajouter un point de vente
+    </button>
+
+  </div>
+
+  <script src="welcome-shop-link.js"></script>
+</body>
+</html>
