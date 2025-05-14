@@ -1,114 +1,166 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Créer ma boutique</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Créer ma boutique</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
 
-<body class="bg-gray-100 font-sans min-h-screen pt-24">
+    <body class="bg-gray-100 font-sans min-h-screen pt-24">
+        <!-- ✅ HEADER GLOBAL -->
+        <div id="header"></div>
 
-  <!-- ✅ HEADER GLOBAL -->
-  <div id="header"></div>
+        <!-- ✅ CONTENU CENTRAL -->
+        <div class="flex justify-center items-center py-2 px-4">
+            <div
+                class="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-8 flex flex-col items-center text-center space-y-8"
+            >
+                <!-- Logo de la boutique -->
+                <div class="relative">
+                    <img
+                        id="shop-logo"
+                        src="/images/OIP.jpeg"
+                        alt="Logo boutique"
+                        class="w-28 h-28 rounded-full border-4 border-darkblue object-cover"
+                    />
+                    <label
+                        for="shop-logo-upload"
+                        class="absolute bottom-0 right-0 bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer hover:scale-105 transition"
+                    >
+                        +
+                    </label>
+                    <input
+                        id="shop-logo-upload"
+                        type="file"
+                        accept="image/*"
+                        class="hidden"
+                    />
+                </div>
 
-  <!-- ✅ CONTENU CENTRAL -->
-  <div class="flex justify-center items-center py-2 px-4">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-8 flex flex-col items-center text-center space-y-8">
+                <!-- Titre -->
+                <h1 class="text-3xl font-bold text-darkblue">
+                    Créer ma boutique
+                </h1>
 
-      <!-- Logo de la boutique -->
-      <div class="relative">
-        <img id="shop-logo" src="/images/OIP.jpeg" alt="Logo boutique"
-             class="w-28 h-28 rounded-full border-4 border-darkblue object-cover" />
-        <label for="shop-logo-upload"
-               class="absolute bottom-0 right-0 bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer hover:scale-105 transition">
-          +
-        </label>
-        <input id="shop-logo-upload" type="file" accept="image/*" class="hidden" />
-      </div>
+                <!-- Formulaire -->
+                <form
+                    id="shopForm"
+                    class="w-full space-y-5 px-4 sm:px-8 text-left"
+                >
+                    <div>
+                        <label
+                            class="block mb-1 text-sm font-medium text-gray-700"
+                            >Nom de la boutique</label
+                        >
+                        <input
+                            name="nom"
+                            type="text"
+                            required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-primary focus:outline-none"
+                        />
+                    </div>
 
-      <!-- Titre -->
-      <h1 class="text-3xl font-bold text-darkblue">Créer ma boutique</h1>
+                    <div>
+                        <label
+                            class="block mb-1 text-sm font-medium text-gray-700"
+                            >Type de boutique</label
+                        >
+                        <select
+                            name="type"
+                            id="type-boutique"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-primary focus:outline-none"
+                        >
+                            <option disabled selected>Chargement...</option>
+                        </select>
+                    </div>
 
-      <!-- Formulaire -->
-      <form id="shopForm" class="w-full space-y-5 px-4 sm:px-8 text-left">
-        <div>
-          <label class="block mb-1 text-sm font-medium text-gray-700">Nom de la boutique</label>
-          <input name="nom" type="text" required
-                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-primary focus:outline-none" />
+                    <div>
+                        <label
+                            class="block mb-1 text-sm font-medium text-gray-700"
+                            >Adresse</label
+                        >
+                        <input
+                            name="adresse"
+                            type="text"
+                            required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-primary focus:outline-none"
+                        />
+                    </div>
+
+                    <div>
+                        <label
+                            class="block mb-1 text-sm font-medium text-gray-700"
+                            >Nombre de points de vente</label
+                        >
+                        <input
+                            name="nb_points"
+                            type="number"
+                            min="1"
+                            required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-primary focus:outline-none"
+                        />
+                    </div>
+
+                    <!-- Boutons -->
+                    <div class="flex justify-center gap-4 pt-4">
+                        <button
+                            type="button"
+                            onclick="window.history.back()"
+                            class="bg-gray-700 hover:bg-gray-600 text-white font-semibold px-6 py-3 rounded-lg transition"
+                        >
+                            Annuler
+                        </button>
+                        <button
+                            type="submit"
+                            class="bg-primary hover:bg-orange-800 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition"
+                        >
+                            Créer
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
 
-        <div>
-          <label class="block mb-1 text-sm font-medium text-gray-700">Type de boutique</label>
-          <select name="type" id="type-boutique"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-primary focus:outline-none">
-            <option disabled selected>Chargement...</option>
-          </select>
-        </div>
+        <!-- TAILWIND CONFIG + HEADER SCRIPT -->
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: "#ED7B01",
+                            darkblue: "#1C236B",
+                        },
+                        fontFamily: {
+                            sans: ["Inter", "sans-serif"],
+                        },
+                    },
+                },
+            };
 
-        <div>
-          <label class="block mb-1 text-sm font-medium text-gray-700">Adresse</label>
-          <input name="adresse" type="text" required
-                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-primary focus:outline-none" />
-        </div>
+            fetch("/components/header.html")
+                .then((res) => res.text())
+                .then((html) => {
+                    document.getElementById("header").innerHTML = html;
 
-        <div>
-          <label class="block mb-1 text-sm font-medium text-gray-700">Nombre de points de vente</label>
-          <input name="nb_points" type="number" min="1" required
-                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-primary focus:outline-none" />
-        </div>
-
-        <!-- Boutons -->
-        <div class="flex justify-center gap-4 pt-4">
-          <button type="button" onclick="window.history.back()"
-                  class="bg-gray-700 hover:bg-gray-600 text-white font-semibold px-6 py-3 rounded-lg transition">
-            Annuler
-          </button>
-          <button type="submit"
-                  class="bg-primary hover:bg-orange-800 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition">
-            Créer
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- TAILWIND CONFIG + HEADER SCRIPT -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: '#ED7B01',
-            darkblue: '#1C236B',
-          },
-          fontFamily: {
-            sans: ['Inter', 'sans-serif']
-          }
-        }
-      }
-    }
-
-    fetch('/components/header.html')
-      .then(res => res.text())
-      .then(html => {
-        document.getElementById('header').innerHTML = html;
-
-        fetch("https://api.tondomaine.com/user/me", {
-          headers: {
-            Authorization: "Bearer VOTRE_TOKEN_ICY"
-          }
-        })
-        .then(res => res.json())
-        .then(data => {
-          document.getElementById("user-name").textContent = data.first_name || "Utilisateur";
-          if (data.profile_photo_url) {
-            document.getElementById("user-avatar").src = data.profile_photo_url;
-          }
-        })
-        .catch(err => console.error("Erreur utilisateur:", err));
-      });
-  </script>
-
-</body>
+                    fetch("https://api.tondomaine.com/user/me", {
+                        headers: {
+                            Authorization: "Bearer VOTRE_TOKEN_ICY",
+                        },
+                    })
+                        .then((res) => res.json())
+                        .then((data) => {
+                            document.getElementById("user-name").textContent =
+                                data.first_name || "Utilisateur";
+                            if (data.profile_photo_url) {
+                                document.getElementById("user-avatar").src =
+                                    data.profile_photo_url;
+                            }
+                        })
+                        .catch((err) =>
+                            console.error("Erreur utilisateur:", err)
+                        );
+                });
+        </script>
+    </body>
 </html>

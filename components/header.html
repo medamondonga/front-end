@@ -1,26 +1,38 @@
-<header class="w-full bg-white shadow px-4 sm:px-8 py-4 fixed top-0 left-0 right-0 z-50">
+<header
+    class="w-full max-h-24 bg-white shadow px-2 sm:px-8 py-4 fixed top-0 left-0 right-0 z-50"
+>
     <!-- CONTAINER CENTRÉ ET MAX-WIDTH POUR ESPACEMENT -->
-    <div class="w-full max-w-6xl mx-auto flex items-center justify-between">
-      
-      <!-- Logo Application -->
-      <div class="w-16 h-16">
-        <img src="/images/logo_trans.png" alt="Logo App" class="w-full h-full object-contain" />
-      </div>
-  
-      <!-- Partie Utilisateur (desktop) -->
-      <div class="hidden sm:flex flex-col items-center">
-        <img id="user-avatar" src="/images/avatar.png"
-             alt="Utilisateur" class="w-12 h-12 rounded-full object-cover border-2 border-primary" />
-        <span id="user-name" class="text-sm text-darkblue font-medium mt-1">Utilisateur</span>
-      </div>
-  
-      <!-- Menu burger (mobile only) -->
-      <div class="sm:hidden">
-        <button id="burger-toggle" class="text-darkblue text-3xl focus:outline-none">
-          ☰
-        </button>
-      </div>
-  
+    <div class="w-full flex items-center justify-between">
+        <!-- Logo Application -->
+        <div class="w-32">
+            <img
+                src="/images/logo_trans.png"
+                alt="Logo App"
+                class="w-full h-full object-contain"
+            />
+        </div>
+
+        <!-- Partie Utilisateur (desktop) -->
+        <div class="hidden sm:flex flex-col items-center">
+            <img
+                id="user-avatar"
+                src="/images/avatar.png"
+                alt="Utilisateur"
+                class="w-12 h-12 rounded-full object-cover border-2 border-primary"
+            />
+            <span id="user-name" class="text-sm text-darkblue font-medium mt-1"
+                >Utilisateur</span
+            >
+        </div>
+
+        <!-- Menu burger (mobile only) -->
+        <div class="sm:hidden">
+            <button
+                id="burger-toggle"
+                class="text-darkblue text-3xl focus:outline-none"
+            >
+                ☰
+            </button>
+        </div>
     </div>
-  </header>
-  
+</header>
