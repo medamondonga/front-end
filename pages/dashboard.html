@@ -4,8 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+      <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#ED7B01',
+            darkblue: '#1C236B',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
 </head>
 <body>
     <h1>I'm the dashbord</h1>
+    <div id="navbar"></div>
+  <div class="sm:pl-64">
+    <div class="p-6">
+      <!-- ton contenu principal -->
+    </div>
+  </div>
+
+  <script type="module">
+    import { loadNavbar } from '/assets/js/navbar.js'
+    loadNavbar()
+  </script>
 </body>
 </html>

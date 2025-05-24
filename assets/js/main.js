@@ -1,7 +1,20 @@
+import { loadHeader } from './header.js'
+import { renderTable } from './table.js'
+import { getArticles } from './api.js'
+
 const basic_endpoint = "http://127.0.0.1:8000/"
 const accounts_endpoint = "http://127.0.0.1:8000/accounts/"
 const stock_endpoint ="http://127.0.0.1:8000/stock/"
 const user_endpoint = "http://127.0.0.1:8000/user/"
+
+loadHeader();
+
+getArticles().then(data => {
+  const columns = ['Nom', 'Catégorie', 'Stock'];
+  const rows = data.map(a => [a.nom, a.categorie, a.stock]);
+  renderTable('article-table', columns, rows);
+});
+
 
 document.addEventListener("submit", async (e) => {
   e.preventDefault();

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Liste des articles</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#ED7B01',
+                        darkblue: '#1C236B'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+
+<body class="bg-gray-100 font-sans">
+
+    <!-- Header (fixe) -->
+    <div id="header"></div>
+
+    <!-- Navbar latérale (fixe à gauche) -->
+    <div id="navbar"></div>
+
+    <!-- Contenu principal -->
+    <main class="sm:pl-64 pt-[112px] p-6 sm:p-10">
+        <h1 class="text-2xl font-bold text-darkblue mb-6 pt-20 pl-3">Articles Disponibles</h1>
+        <div id="article-table"></div>
+    </main>
+    
+
+    <!-- Scripts -->
+    <script type="module">
+        import { loadNavbar } from '/assets/js/navbar.js';
+        import { loadHeader } from '/assets/js/header.js';
+        import { getArticles } from '/assets/js/api.js';
+        import { renderTable } from '/assets/js/table.js';
+
+        loadNavbar();
+        loadHeader();
+
+        getArticles().then(data => {
+            const columns = ['N°', 'Nom', 'Couleur', 'Taille', 'Categorie',
+                            'Prix-Achat', 'Prix-Vente', 'Quantité'];
+            const rows = data.map((a, index) => [
+                index + 1,  // Numéro automatique
+                a.nom_article,
+                a.couleur,
+                a.taille,
+                a.categorie,
+                a.prix_achat_unitaire,
+                a.prix_vente_unitaire,
+                a.quantite_en_stock
+            ]);
+
+
+            renderTable('article-table', columns, rows);
+        });
+    </script>
+</body>
+
+</html>
