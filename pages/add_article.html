@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ajouter un article</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#ED7B01',
+            darkblue: '#1C236B'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-100 font-sans p-10">
+
+  <h1 class="text-2xl font-bold text-darkblue mb-6">Gestion des Articles</h1>
+
+  <!-- Bouton -->
+  <button onclick="openForm()" class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800">
+    Ajouter un article
+  </button>
+
+  <!-- Modal -->
+  <div id="form-modal-overlay"
+       class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+    <div class="bg-white w-full max-w-xl mx-auto p-6 rounded-xl shadow-xl relative">
+      <button onclick="hideFormModal()"
+              class="absolute top-3 right-4 text-2xl text-gray-500 hover:text-red-600"
+              aria-label="Fermer">&times;</button>
+      <div id="form-modal-content" class="mt-4"></div>
+    </div>
+  </div>
+
+  <!-- Appel du script -->
+  <script type="module">
+    import { showFormModal, hideFormModal } from '/assets/js/form.js';
+
+    window.hideFormModal = hideFormModal;
+
+    window.openForm = function () {
+      const fields = [
+        { name: 'nom', label: 'Nom', type: 'text' },
+        { name: 'categorie', label: 'Catégorie', type: 'text' },
+        { name: 'stock', label: 'Stock', type: 'number' }
+      ];
+
+      showFormModal(fields, (formData) => {
+        // ici tu fais un fetch vers ton API
+        console.log("Envoyé au backend :", formData);
+
+        fetch('/api/articles/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        })
+        .then(res => {
+          if (res.ok) alert("Ajouté !");
+          else alert("Erreur !");
+        });
+      });
+    }
+  </script>
+</body>
+</html>

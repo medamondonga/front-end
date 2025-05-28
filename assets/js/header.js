@@ -4,7 +4,7 @@ export function loadHeader() {
     .then(html => {
       document.getElementById('header').innerHTML = html;
 
-      fetch("https://api.tondomaine.com/user/me", {
+      fetch("http://127.0.0.1:8000/accounts/me/4/", {
         headers: {
           Authorization: "Bearer VOTRE_TOKEN_ICY"
         }
