@@ -52,8 +52,7 @@
   <!-- Modal pour formulaire dynamique -->
   <div id="overlay" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 hidden"></div>
 
-  <div id="form-modal"
-    class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+  <div id="form-modal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
     bg-white rounded-lg shadow-lg z-50 w-full max-w-md p-6 hidden">
     <h2 id="form-title" class="text-xl font-bold text-darkblue mb-4">Ajouter</h2>
     <form id="dynamic-form" class="space-y-4"></form>
@@ -67,6 +66,12 @@
 
   <!-- Scripts -->
   <script type="module">
+    const COULEURS = [
+      'noir', 'blanc', 'gris', 'bleu', 'rouge', 'vert', 'jaune',
+      'rose', 'orange', 'violet', 'marron', 'beige', 'turquoise',
+      'bordeaux', 'or'
+    ];
+
     import { loadNavbar } from '/assets/js/navbar.js';
     import { loadHeader } from '/assets/js/header.js';
     import { getArticles } from '/assets/js/api.js';
@@ -79,7 +84,8 @@
 
     // Remplissage tableau
     getArticles().then(data => {
-      const columns = ['N°', 'Nom', 'Couleur', 'Taille', 'Categorie', 'Prix-Achat', 'Prix-Vente', 'Quantité'];
+      const columns = ['N°', 'Nom', 'Couleur', 'Taille',
+        'Categorie', 'Prix-Achat', 'Prix-Vente', 'Quantité'];
       const rows = data.map((a, index) => [
         index + 1,
         a.nom_article,
@@ -93,8 +99,7 @@
       renderTable('article-table', columns, rows);
     });
 
-    // Affichage modal
-    function showFormModal(fields, onSubmit) {
+    function showFormModal(fields, onSubmit, categories = []) {
       const modal = document.getElementById('form-modal');
       const overlay = document.getElementById('overlay');
       const form = document.getElementById('dynamic-form');
@@ -104,14 +109,65 @@
       form.innerHTML = '';
       title.textContent = "Ajouter un article";
 
+      const inputElements = {};
+
       fields.forEach(field => {
-        const input = document.createElement('input');
-        input.name = field.name;
-        input.type = field.type;
-        input.placeholder = field.label;
-        input.className = 'w-full border border-gray-300 rounded px-4 py-2';
+        let input;
+
+        if (field.type === 'select') {
+          input = document.createElement('select');
+          input.name = field.name;
+          input.className = 'w-full border border-gray-300 rounded px-4 py-2';
+
+          (field.options || []).forEach(opt => {
+            const option = document.createElement('option');
+            option.value = opt.value;
+            option.textContent = opt.label;
+            input.appendChild(option);
+          });
+        } else {
+          input = document.createElement('input');
+          input.name = field.name;
+          input.type = field.type;
+          input.placeholder = field.label;
+          input.className = 'w-full border border-gray-300 rounded px-4 py-2';
+        }
+
+        inputElements[field.name] = input;
         form.appendChild(input);
       });
+
+      // Logique dynamique : mettre à jour les tailles en fonction de la catégorie sélectionnée
+      const categorieInput = inputElements['categorie'];
+      const tailleInput = inputElements['taille'];
+
+      if (categorieInput && tailleInput) {
+        categorieInput.addEventListener('change', () => {
+          const selectedId = parseInt(categorieInput.value);
+          const selectedCat = categories.find(c => c.id === selectedId);
+
+          const tailles = {
+            chaussures: ['37', '38', '39', '40', '41'],
+            sacs: ['Petit', 'Moyen', 'Grand'],
+            vetement: ['S', 'M', 'L', 'XL'],
+            autre: ['Unique']
+          };
+
+          const tailleList = tailles[selectedCat?.type_categorie] || ['Unique'];
+
+          // Réinitialise les options du champ taille
+          tailleInput.innerHTML = '';
+          tailleList.forEach(taille => {
+            const opt = document.createElement('option');
+            opt.value = taille;
+            opt.textContent = taille;
+            tailleInput.appendChild(opt);
+          });
+        });
+
+        // Déclenche l’événement une fois au chargement pour remplir les tailles par défaut
+        categorieInput.dispatchEvent(new Event('change'));
+      }
 
       submit.onclick = function () {
         const formData = {};
@@ -126,42 +182,60 @@
       modal.classList.remove('hidden');
       overlay.classList.remove('hidden');
     }
-
     function hideFormModal() {
       document.getElementById('form-modal').classList.add('hidden');
       document.getElementById('overlay').classList.add('hidden');
     }
 
-    document.getElementById('btn-cancel').addEventListener('click', hideFormModal);
-    document.getElementById('overlay').addEventListener('click', hideFormModal);
+    document.getElementById('btn-cancel')?.addEventListener('click', hideFormModal);
+    document.getElementById('overlay')?.addEventListener('click', hideFormModal);
 
     // Bouton Ajouter
-    injectButton('btn-actions', 'btn-add-template', () => {
+    injectButton('btn-actions', 'btn-add-template', async () => {
+      // 1. Récupération des catégories
+      const res = await fetch('http://127.0.0.1:8000/stock/categorie/list/');
+      const categories = await res.json();
+
+      const categorieOptions = categories.map(c => ({
+        value: c.id,
+        label: `${c.nom_categorie} (${c.type_categorie})`,
+        type_categorie: c.type_categorie
+      }));
+
+      // 2. Définition des couleurs
+      const couleurOptions = COULEURS.map(c => ({
+        value: c,
+        label: c.charAt(0).toUpperCase() + c.slice(1)
+      }));
+
+      // 3. Champs du formulaire
       const fields = [
         { name: 'nom_article', label: 'Nom', type: 'text' },
-        { name: 'couleur', label: 'Couleur', type: 'text' },
-        { name: 'taille', label: 'Taille ', type: 'text' },
-        { name: 'categorie', label: 'Catégorie', type: 'text' },
+        { name: 'couleur', label: 'Couleur', type: 'select', options: couleurOptions },
+        { name: 'categorie', label: 'Catégorie', type: 'select', options: categorieOptions },
+        { name: 'taille', label: 'Taille', type: 'select', options: [] },
         { name: 'prix_achat_unitaire', label: 'Prix achat', type: 'number' },
         { name: 'prix_vente_unitaire', label: 'Prix vente', type: 'number' },
-        { name: 'quantite_en_stock', label: 'Quantité', type: 'number' },
+        { name: 'quantite_en_stock', label: 'Quantité', type: 'number' }
       ];
+
       showFormModal(fields, (data) => {
-        fetch('/api/articles/', {
+        fetch('http://127.0.0.1:8000/stock/article/new/', {
           method: 'POST',
-          /*headers: {
+          headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer TON_TOKEN'
-          },*/
+          },
           body: JSON.stringify(data)
         }).then(res => {
           if (res.ok) alert('Article ajouté avec succès');
           else alert('Erreur d’ajout');
         });
-      });
+      }, categories);
     });
 
   </script>
 
 </body>
+
 </html>
