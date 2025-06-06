@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Liste des articles</title>
+    <title>Liste des clients</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -38,7 +38,7 @@
 
         <!-- Titre -->
         <div class="flex justify-between items-center pt-10 ml-6">
-            <h1 class="text-2xl font-bold text-darkblue">Categorie</h1>
+            <h1 class="text-2xl font-bold text-darkblue">Liste des Clients</h1>
         </div>
 
         <!-- Bouton Ajouter -->
@@ -46,7 +46,7 @@
 
 
         <!-- Tableau -->
-        <div id="categorie-table" class="w-full"></div>
+        <div id="client-table" class="w-full"></div>
     </main>
 
     <!-- Modal pour formulaire dynamique -->
@@ -68,7 +68,7 @@
     <script type="module">
         import { loadNavbar } from '/assets/js/navbar.js';
         import { loadHeader } from '/assets/js/header.js';
-        import { getCategories } from '/assets/js/api.js';
+        import { getClients } from '/assets/js/api.js';
         import { renderTable } from '/assets/js/table.js';
         import { injectButton } from '/assets/js/utils.js';
 
@@ -77,14 +77,17 @@
         loadHeader();
 
         // Remplissage tableau
-        getCategories().then(data => {
-            const columns = ['N°', 'Nom', 'Type'];
+        getClients().then(data => {
+            const columns = ['N°', 'Nom', 'Prenom', "Sexe", "Telephone", "Adresse",];
             const rows = data.map((a, index) => [
                 index + 1,
-                a.nom_categorie,
-                a.type_categorie,
+                a.nom_client,
+                a.prenom_client,
+                a.sexe,
+                a.telephone,
+                a.adresse
             ]);
-            renderTable('categorie-table', columns, rows);
+            renderTable('client-table', columns, rows);
         });
 
         // Affichage modal
@@ -96,7 +99,7 @@
             const submit = document.getElementById('submit-form');
 
             form.innerHTML = '';
-            title.textContent = "Ajouter un article";
+            title.textContent = "Ajouter un client";
 
             fields.forEach(field => {
                 let inputElement;
@@ -136,49 +139,50 @@
             modal.classList.remove('hidden');
             overlay.classList.remove('hidden');
         }
-        function hideFormModal() {
-            document.getElementById('form-modal').classList.add('hidden');
-            document.getElementById('overlay').classList.add('hidden');
-        }
 
-        document.getElementById('btn-cancel')?.addEventListener('click', hideFormModal);
-        document.getElementById('overlay')?.addEventListener('click', hideFormModal);
+            function hideFormModal() {
+      document.getElementById('form-modal').classList.add('hidden');
+      document.getElementById('overlay').classList.add('hidden');
+    }
 
+    document.getElementById('btn-cancel')?.addEventListener('click', hideFormModal);
+    document.getElementById('overlay')?.addEventListener('click', hideFormModal);
 
         // Bouton Ajouter
         injectButton('btn-actions', 'btn-add-template', () => {
-  const fields = [
-    { name: 'nom_categorie', label: 'Nom', type: 'text' },
-    {
-      name: 'type_categorie',
-      label: 'Type',
-      type: 'select',
-      options: [
-        { value: 'chaussures', label: 'Chaussure' },
-        { value: 'sacs', label: 'Sac' },
-        { value: 'vetements', label: 'Vêtement' },
-        { value: 'autre', label: 'Autre' }
-      ]
-    }
-  ];
+            const fields = [
+                { name: 'nom_client', label: 'Nom', type: 'text' },
+                { name: 'prenom_client', label: "Prenom", type: 'Text' },
+                {
+                    name: 'sexe',
+                    label: 'Type',
+                    type: 'select',
+                    options: [
+                        { value: 'homme', label: 'Homme' },
+                        { value: 'femme', label: 'Femme' },
+                    ]
+                },
+                { name: 'telephone', label: "Telephone", type: 'Text' },
+                { name: 'adresse', label: "Adresse", type: 'Text' },
+            ];
 
-  showFormModal(fields, (data) => {
-    fetch('http://127.0.0.1:8000/stock/categorie/new/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer TON_TOKEN'
-      },
-      body: JSON.stringify(data)
-    }).then(res => {
-      if (res.ok) alert('Categorie ajoutés avec succès');
-      else alert('Erreur d’ajout');
-    }).catch(err => {
-      console.error('Erreur :', err);
-      alert('Une erreur réseau est survenue.');
-    });
-  });
-});
+            showFormModal(fields, (data) => {
+                fetch('http://127.0.0.1:8000/stock/client/new/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: 'Bearer TON_TOKEN'
+                    },
+                    body: JSON.stringify(data)
+                }).then(res => {
+                    if (res.ok) alert('Client ajouté avec succès');
+                    else alert('Erreur d’ajout');
+                }).catch(err => {
+                    console.error('Erreur :', err);
+                    alert('Une erreur réseau est survenue.');
+                });
+            });
+        });
 
     </script>
 

@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-      <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <script>
     tailwind.config = {
       theme: {
@@ -21,18 +24,55 @@
     }
   </script>
 </head>
+
 <body>
-    <h1>I'm the dashbord</h1>
-    <div id="navbar"></div>
+  <!-- Ton layout existant -->
+  <div id="navbar"></div>
+
   <div class="sm:pl-64">
     <div class="p-6">
-      <!-- ton contenu principal -->
+
+      <!-- Statistiques principales -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white p-5 rounded-xl shadow">
+          <h4 class="text-gray-500 text-sm mb-1">Total products</h4>
+          <p class="text-2xl font-bold text-darkblue">1325</p>
+          <p class="text-xs text-orange-600 mt-2">2.5% ↑ Compared to last year</p>
+        </div>
+        <div class="bg-white p-5 rounded-xl shadow">
+          <h4 class="text-gray-500 text-sm mb-1">Total sale</h4>
+          <p class="text-2xl font-bold text-darkblue">32500 $</p>
+          <p class="text-xs text-primary mt-2">2.5% ↑ Compared to last year</p>
+        </div>
+        <div class="bg-primary text-white p-5 rounded-xl shadow">
+          <h4 class="text-sm mb-1">Total customer</h4>
+          <p class="text-2xl font-bold">958</p>
+          <p class="text-xs mt-2">2.5% ↑ Compared to last year</p>
+        </div>
+        <div class="bg-orange-300 text-white p-5 rounded-xl shadow">
+          <h4 class="text-sm mb-1">Total supplier</h4>
+          <p class="text-2xl font-bold">540</p>
+          <p class="text-xs mt-2">2.5% ↑ Compared to last year</p>
+        </div>
+      </div>
+
+      <!-- Graphique dépenses et gains -->
+      <div class="bg-white p-5 rounded-xl shadow mb-6">
+        <h4 class="font-bold text-darkblue text-lg mb-4">Dépenses et revenus</h4>
+        <canvas id="lineChart" class="w-full h-64"></canvas>
+      </div>
+
+
+      <!-- Tu continues ici avec invoices + graph + top selling -->
+
     </div>
   </div>
+
 
   <script type="module">
     import { loadNavbar } from '/assets/js/navbar.js'
     loadNavbar()
   </script>
 </body>
+
 </html>
