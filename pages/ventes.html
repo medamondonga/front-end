@@ -38,7 +38,7 @@
 
     <!-- Titre -->
     <div class="flex justify-between items-center pt-10 ml-6">
-      <h1 class="text-2xl font-bold text-darkblue">Articles Disponibles</h1>
+      <h1 class="text-2xl font-bold text-darkblue">Historique des ventes</h1>
     </div>
 
     <!-- Bouton Ajouter -->
@@ -46,7 +46,7 @@
 
 
     <!-- Tableau -->
-    <div id="article-table" class="w-full"></div>
+    <div id="client-table" class="w-full"></div>
   </main>
 
   <!-- Modal pour formulaire dynamique -->
@@ -74,7 +74,7 @@
 
     import { loadNavbar } from '/assets/js/navbar.js';
     import { loadHeader } from '/assets/js/header.js';
-    import { getArticles } from '/assets/js/api.js';
+    import { getVentes } from '/assets/js/api.js';
     import { renderTable } from '/assets/js/table.js';
     import { injectButton } from '/assets/js/utils.js';
 
@@ -83,21 +83,16 @@
     loadHeader();
 
     // Remplissage tableau
-    getArticles().then(data => {
-      const columns = ['N°', 'Nom', 'Couleur', 'Taille',
-        'Categorie', 'Prix-Achat', 'Prix-Vente', 'Quantité'];
-      const rows = data.map((a, index) => [
-        index + 1,
-        a.nom_article,
-        a.couleur,
-        a.taille,
-        a.categorie,
-        a.prix_achat_unitaire,
-        a.prix_vente_unitaire,
-        a.quantite_en_stock
-      ]);
-      renderTable('article-table', columns, rows);
-    });
+    getVentes().then(data => {
+            const columns = ['N°', 'Date', 'Client', 'Total'];
+            const rows = data.map((a, index) => [
+                index + 1,
+                a.date_vente,
+                a.client,
+                a.prix_total_vente,
+            ]);
+            renderTable('client-table', columns, rows);
+        });
 
     function showFormModal(fields, onSubmit, categories = []) {
       const modal = document.getElementById('form-modal');

@@ -1,78 +1,146 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
   <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
             primary: '#ED7B01',
-            darkblue: '#1C236B',
+            darkblue: '#1C236B'
           },
           fontFamily: {
             sans: ['Inter', 'sans-serif']
           }
         }
       }
-    }
+    };
   </script>
 </head>
 
-<body>
-  <!-- Ton layout existant -->
+<body class="bg-gray-100 font-sans min-h-screen">
+  <!-- Header et Navbar -->
+  <div id="header"></div>
   <div id="navbar"></div>
 
-  <div class="sm:pl-64">
-    <div class="p-6">
-
-      <!-- Statistiques principales -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white p-5 rounded-xl shadow">
-          <h4 class="text-gray-500 text-sm mb-1">Total products</h4>
-          <p class="text-2xl font-bold text-darkblue">1325</p>
-          <p class="text-xs text-orange-600 mt-2">2.5% ↑ Compared to last year</p>
-        </div>
-        <div class="bg-white p-5 rounded-xl shadow">
-          <h4 class="text-gray-500 text-sm mb-1">Total sale</h4>
-          <p class="text-2xl font-bold text-darkblue">32500 $</p>
-          <p class="text-xs text-primary mt-2">2.5% ↑ Compared to last year</p>
-        </div>
-        <div class="bg-primary text-white p-5 rounded-xl shadow">
-          <h4 class="text-sm mb-1">Total customer</h4>
-          <p class="text-2xl font-bold">958</p>
-          <p class="text-xs mt-2">2.5% ↑ Compared to last year</p>
-        </div>
-        <div class="bg-orange-300 text-white p-5 rounded-xl shadow">
-          <h4 class="text-sm mb-1">Total supplier</h4>
-          <p class="text-2xl font-bold">540</p>
-          <p class="text-xs mt-2">2.5% ↑ Compared to last year</p>
+  <!-- Contenu principal -->
+  <main class="sm:pl-64 p-6 space-y-8 ml-4">
+    <!-- Statistiques -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-24">
+      <div class="bg-white rounded-2xl shadow-md p-5">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-darkblue font-bold text-lg">Commandes</h3>
+            <p class="text-2xl font-semibold mt-2">40,876</p>
+            <p class="text-sm text-green-600 mt-1 flex items-center">
+              <i class='bx bx-up-arrow-alt mr-1'></i> Depuis hier
+            </p>
+          </div>
+          <i class='bx bx-cart-alt text-4xl text-primary'></i>
         </div>
       </div>
 
-      <!-- Graphique dépenses et gains -->
-      <div class="bg-white p-5 rounded-xl shadow mb-6">
-        <h4 class="font-bold text-darkblue text-lg mb-4">Dépenses et revenus</h4>
-        <canvas id="lineChart" class="w-full h-64"></canvas>
+      <div class="bg-white rounded-2xl shadow-md p-5">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-darkblue font-bold text-lg">Ventes</h3>
+            <p class="text-2xl font-semibold mt-2">38,876</p>
+            <p class="text-sm text-green-600 mt-1 flex items-center">
+              <i class='bx bx-up-arrow-alt mr-1'></i> Depuis hier
+            </p>
+          </div>
+          <i class='bx bxs-cart-add text-4xl text-primary'></i>
+        </div>
       </div>
 
+      <div class="bg-white rounded-2xl shadow-md p-5">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-darkblue font-bold text-lg">Profit</h3>
+            <p class="text-2xl font-semibold mt-2">12,876 F</p>
+            <p class="text-sm text-green-600 mt-1 flex items-center">
+              <i class='bx bx-up-arrow-alt mr-1'></i> Depuis hier
+            </p>
+          </div>
+          <i class='bx bx-cart text-4xl text-primary'></i>
+        </div>
+      </div>
 
-      <!-- Tu continues ici avec invoices + graph + top selling -->
-
+      <div class="bg-white rounded-2xl shadow-md p-5">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-darkblue font-bold text-lg">Revenu</h3>
+            <p class="text-2xl font-semibold mt-2">11,086</p>
+            <p class="text-sm text-red-600 mt-1 flex items-center">
+              <i class='bx bx-down-arrow-alt mr-1'></i> Aujourd’hui
+            </p>
+          </div>
+          <i class='bx bxs-cart-download text-4xl text-primary'></i>
+        </div>
+      </div>
     </div>
-  </div>
 
+    <!-- Table de ventes -->
+    <div class="grid lg:grid-cols-3 gap-6" >
+      <!-- Ventes récentes -->
+      <div class="bg-white rounded-2xl shadow-md p-6 lg:col-span-2 " >
+        <h2 class="text-darkblue font-semibold text-lg mb-4">Ventes récentes</h2>
+        <!-- Tableau -->
+        <div id="client-table"></div>
+        
+        <div class="text-right mt-4">
+          <a href="/pages/ventes.html" class="text-primary hover:underline font-medium">Voir tout</a>
+        </div>
+      </div>
 
+      <!-- Top ventes -->
+      <div class="bg-white rounded-2xl shadow-md p-6">
+        <h2 class="text-darkblue font-semibold text-lg mb-4">Produits les plus vendus</h2>
+        <ul class="space-y-2 text-darkblue text-sm">
+          <li class="flex justify-between">
+            <span>Ordinateur</span><span class="font-medium">1107 F</span>
+          </li>
+          <li class="flex justify-between">
+            <span>iPhone</span><span class="font-medium">2345 F</span>
+          </li>
+          <li class="flex justify-between">
+            <span>Pantalon</span><span class="font-medium">2312 F</span>
+          </li>
+          <!-- Continue avec les autres produits -->
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts JS -->
   <script type="module">
-    import { loadNavbar } from '/assets/js/navbar.js'
-    loadNavbar()
+    import { loadNavbar } from '/assets/js/navbar.js';
+    import { loadHeader } from '/assets/js/header.js';
+    import { getVentes } from '/assets/js/api.js';
+    import { renderTable } from '/assets/js/table.js';
+    loadNavbar();
+    loadHeader();
+
+    getVentes().then(data => {
+            const columns = ['N°', 'Date', 'Client', 'Total'];
+            const rows = data.map((a, index) => [
+                index + 1,
+                a.date_vente,
+                a.client,
+                a.prix_total_vente,
+            ]);
+            renderTable('client-table', columns, rows);
+        });
+
   </script>
+
+  <!-- Boxicons -->
+  <script src="https://unpkg.com/boxicons@2.0.7/dist/boxicons.js"></script>
 </body>
 
 </html>

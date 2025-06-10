@@ -20,7 +20,7 @@ export async function getCategories() {
         Authorization: "Bearer VOTRE_TOKEN_ICY"
       }
     });
-    if (!response.ok) throw new Error("Erreur lors du chargement des articles");
+    if (!response.ok) throw new Error("Erreur lors du chargement des categories");
     return await response.json();
   } catch (error) {
     console.error(error);
@@ -35,7 +35,22 @@ export async function getClients() {
         Authorization: "Bearer VOTRE_TOKEN_ICY"
       }
     });
-    if (!response.ok) throw new Error("Erreur lors du chargement des articles");
+    if (!response.ok) throw new Error("Erreur lors du chargement des clients");
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+export async function getVentes() {
+  try {
+    const response = await fetch("http://127.0.0.1:8000/stock/ventes/list/", {
+      headers: {
+        Authorization: "Bearer VOTRE_TOKEN_ICY"
+      }
+    });
+    if (!response.ok) throw new Error("Erreur lors du chargement des ventes");
     return await response.json();
   } catch (error) {
     console.error(error);

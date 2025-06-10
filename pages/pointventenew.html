@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Créer ma boutique</title>
+        <title>Créer point de vente</title>
         <script src="https://cdn.tailwindcss.com"></script>
     </head>
 
@@ -20,7 +20,7 @@
                 <div class="relative">
                     <img
                         id="shop-logo"
-                        src="/images/OIP.jpeg"
+                        src="/assets/images/OIP.jpeg"
                         alt="Logo boutique"
                         class="w-28 h-28 rounded-full border-4 border-darkblue object-cover"
                     />
@@ -40,7 +40,7 @@
 
                 <!-- Titre -->
                 <h1 class="text-3xl font-bold text-darkblue">
-                    Créer ma boutique
+                    Ajouter Point de Vente
                 </h1>
 
                 <!-- Formulaire -->
@@ -64,20 +64,6 @@
                     <div>
                         <label
                             class="block mb-1 text-sm font-medium text-gray-700"
-                            >Type de boutique</label
-                        >
-                        <select
-                            name="type"
-                            id="type-boutique"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-primary focus:outline-none"
-                        >
-                            <option disabled selected>Chargement...</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label
-                            class="block mb-1 text-sm font-medium text-gray-700"
                             >Adresse</label
                         >
                         <input
@@ -87,21 +73,20 @@
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-primary focus:outline-none"
                         />
                     </div>
-
                     <div>
                         <label
                             class="block mb-1 text-sm font-medium text-gray-700"
-                            >Nombre de points de vente</label
+                            >Gérant</label
                         >
                         <input
-                            name="nb_points"
-                            type="number"
-                            min="1"
+                            name="adresse"
+                            type="text"
                             required
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-primary focus:outline-none"
                         />
                     </div>
 
+                
                     <!-- Boutons -->
                     <div class="flex justify-center gap-4 pt-4">
                         <button
