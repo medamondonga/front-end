@@ -2,186 +2,198 @@
 <html lang="fr">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Liste des articles</title>
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#ED7B01',
-                        darkblue: '#1C236B'
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif']
-                    }
-                }
-            }
-        };
-    </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Liste des Catégories</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#ED7B01',
+            darkblue: '#1C236B'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
 </head>
 
 <body class="bg-gray-100 font-sans">
+  <div id="header"></div>
+  <div id="navbar"></div>
 
-    <!-- Header (fixe) -->
-    <div id="header"></div>
-
-    <!-- Navbar latérale (fixe à gauche) -->
-    <div id="navbar"></div>
-
-    <!-- Contenu principal -->
-    <main class="sm:pl-64 pt-[112px] p-6">
-
-        <!-- Titre -->
-        <div class="flex justify-between items-center pt-10 ml-6">
-            <h1 class="text-2xl font-bold text-darkblue">Categorie</h1>
-        </div>
-
-        <!-- Bouton Ajouter -->
-        <div id="btn-actions" class="flex justify-end mb-6 pr-4"></div>
-
-
-        <!-- Tableau -->
-        <div id="categorie-table" class="w-full"></div>
-    </main>
-
-    <!-- Modal pour formulaire dynamique -->
-    <div id="overlay" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 hidden"></div>
-
-    <div id="form-modal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-    bg-white rounded-lg shadow-lg z-50 w-full max-w-md p-6 hidden">
-        <h2 id="form-title" class="text-xl font-bold text-darkblue mb-4">Ajouter</h2>
-        <form id="dynamic-form" class="space-y-4"></form>
-        <div class="flex justify-end mt-4 gap-3">
-            <button type="button" id="btn-cancel"
-                class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">Annuler</button>
-            <button id="submit-form"
-                class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800 transition">Ajouter</button>
-        </div>
+  <main class="sm:pl-64 pt-[112px] p-6">
+    <div class="flex justify-between items-center pt-10 ml-6">
+      <h1 class="text-2xl font-bold text-darkblue">Catégorie</h1>
     </div>
+    <div id="btn-actions" class="flex justify-end mb-6 pr-4"></div>
+    <div id="categorie-table" class="w-full"></div>
+  </main>
 
-    <!-- Scripts -->
-    <script type="module">
-        import { loadNavbar } from '/assets/js/navbar.js';
-        import { loadHeader } from '/assets/js/header.js';
-        import { getCategories } from '/assets/js/api.js';
-        import { renderTable } from '/assets/js/table.js';
-        import { injectButton } from '/assets/js/utils.js';
+  <div id="overlay" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 hidden"></div>
+  <div id="form-modal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg z-50 w-full max-w-md p-6 hidden">
+    <h2 id="form-title" class="text-xl font-bold text-darkblue mb-4">Ajouter</h2>
+    <form id="dynamic-form" class="space-y-4"></form>
+    <div class="flex justify-end mt-4 gap-3">
+      <button type="button" id="btn-cancel" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">Annuler</button>
+      <button id="submit-form" class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800 transition">Ajouter</button>
+    </div>
+  </div>
 
-        // Chargement header et navbar
-        loadNavbar();
-        loadHeader();
+  <script type="module">
+    import { loadNavbar } from '/assets/js/navbar.js';
+    import { loadHeader } from '/assets/js/header.js';
+    import { getCategories } from '/assets/js/api.js';
+    import { renderTable } from '/assets/js/table.js';
+    import { injectButton } from '/assets/js/utils.js';
 
-        // Remplissage tableau
-        getCategories().then(data => {
-            const columns = ['N°', 'Nom', 'Type'];
-            const rows = data.map((a, index) => [
-                index + 1,
-                a.nom_categorie,
-                a.type_categorie,
-            ]);
-            renderTable('categorie-table', columns, rows);
-        });
+    loadNavbar();
+    loadHeader();
 
-        // Affichage modal
-        function showFormModal(fields, onSubmit) {
-            const modal = document.getElementById('form-modal');
-            const overlay = document.getElementById('overlay');
-            const form = document.getElementById('dynamic-form');
-            const title = document.getElementById('form-title');
-            const submit = document.getElementById('submit-form');
-
-            form.innerHTML = '';
-            title.textContent = "Ajouter un article";
-
-            fields.forEach(field => {
-                let inputElement;
-
-                if (field.type === 'select') {
-                    inputElement = document.createElement('select');
-                    inputElement.name = field.name;
-                    inputElement.className = 'w-full border border-gray-300 rounded px-4 py-2';
-
-                    field.options.forEach(opt => {
-                        const option = document.createElement('option');
-                        option.value = opt.value;
-                        option.textContent = opt.label;
-                        inputElement.appendChild(option);
-                    });
-                } else {
-                    inputElement = document.createElement('input');
-                    inputElement.name = field.name;
-                    inputElement.type = field.type;
-                    inputElement.placeholder = field.label;
-                    inputElement.className = 'w-full border border-gray-300 rounded px-4 py-2';
-                }
-
-                form.appendChild(inputElement);
-            });
-
-            submit.onclick = function () {
-                const formData = {};
-                fields.forEach(field => {
-                    formData[field.name] = form.elements[field.name].value;
-                });
-                modal.classList.add('hidden');
-                overlay.classList.add('hidden');
-                onSubmit(formData);
-            };
-
-            modal.classList.remove('hidden');
-            overlay.classList.remove('hidden');
-        }
-        function hideFormModal() {
-            document.getElementById('form-modal').classList.add('hidden');
-            document.getElementById('overlay').classList.add('hidden');
-        }
-
-        document.getElementById('btn-cancel')?.addEventListener('click', hideFormModal);
-        document.getElementById('overlay')?.addEventListener('click', hideFormModal);
-
-
-        // Bouton Ajouter
-        injectButton('btn-actions', 'btn-add-template', () => {
-  const fields = [
-    { name: 'nom_categorie', label: 'Nom', type: 'text' },
-    {
-      name: 'type_categorie',
-      label: 'Type',
-      type: 'select',
-      options: [
-        { value: 'chaussures', label: 'Chaussure' },
-        { value: 'sacs', label: 'Sac' },
-        { value: 'vetements', label: 'Vêtement' },
-        { value: 'autre', label: 'Autre' }
-      ]
-    }
-  ];
-
-  showFormModal(fields, (data) => {
-    fetch('http://127.0.0.1:8000/stock/categorie/new/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer TON_TOKEN'
-      },
-      body: JSON.stringify(data)
-    }).then(res => {
-      if (res.ok) alert('Categorie ajoutés avec succès');
-      else alert('Erreur d’ajout');
-    }).catch(err => {
-      console.error('Erreur :', err);
-      alert('Une erreur réseau est survenue.');
+    getCategories().then(data => {
+      const columns = ['N°', 'Nom', 'Type'];
+      const rows = data.map((c, index) => ({
+        object: c,
+        row: [index + 1, c.nom_categorie, c.type_categorie]
+      }));
+      renderTable('categorie-table', columns, rows, (categorie) => openEditModal(categorie));
     });
-  });
-});
 
-    </script>
+    function showFormModal(fields, onSubmit) {
+      const modal = document.getElementById('form-modal');
+      const overlay = document.getElementById('overlay');
+      const form = document.getElementById('dynamic-form');
+      const title = document.getElementById('form-title');
+      const submit = document.getElementById('submit-form');
 
+      form.innerHTML = '';
+      title.textContent = 'Ajouter une catégorie';
+
+      fields.forEach(field => {
+        let inputElement;
+        if (field.type === 'select') {
+          inputElement = document.createElement('select');
+          inputElement.name = field.name;
+          inputElement.className = 'w-full border border-gray-300 rounded px-4 py-2';
+          field.options.forEach(opt => {
+            const option = document.createElement('option');
+            option.value = opt.value;
+            option.textContent = opt.label;
+            inputElement.appendChild(option);
+          });
+        } else {
+          inputElement = document.createElement('input');
+          inputElement.name = field.name;
+          inputElement.type = field.type;
+          inputElement.placeholder = field.label;
+          inputElement.className = 'w-full border border-gray-300 rounded px-4 py-2';
+        }
+        form.appendChild(inputElement);
+      });
+
+      submit.onclick = function () {
+        const formData = {};
+        fields.forEach(field => {
+          formData[field.name] = form.elements[field.name].value;
+        });
+        modal.classList.add('hidden');
+        overlay.classList.add('hidden');
+        onSubmit(formData);
+      };
+
+      modal.classList.remove('hidden');
+      overlay.classList.remove('hidden');
+    }
+
+    function openEditModal(categorie) {
+      const fields = [
+        { name: 'nom_categorie', label: 'Nom', type: 'text' },
+        {
+          name: 'type_categorie',
+          label: 'Type',
+          type: 'select',
+          options: [
+            { value: 'chaussures', label: 'Chaussure' },
+            { value: 'sacs', label: 'Sac' },
+            { value: 'vetements', label: 'Vêtement' },
+            { value: 'autre', label: 'Autre' }
+          ]
+        }
+      ];
+
+      showFormModal(fields, (data) => {
+        fetch(`http://127.0.0.1:8000/stock/categorie/update/${categorie.id}/`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer TON_TOKEN'
+          },
+          body: JSON.stringify(data)
+        }).then(res => {
+          if (res.ok) {
+            alert("Catégorie mise à jour avec succès");
+            location.reload();
+          } else {
+            alert("Erreur lors de la mise à jour");
+          }
+        });
+      });
+
+      const form = document.getElementById("dynamic-form");
+      fields.forEach(field => {
+        if (form.elements[field.name]) {
+          form.elements[field.name].value = categorie[field.name];
+        }
+      });
+
+      document.getElementById("form-title").textContent = "Modifier la catégorie";
+      document.getElementById("submit-form").textContent = "Mettre à jour";
+    }
+
+    function hideFormModal() {
+      document.getElementById('form-modal').classList.add('hidden');
+      document.getElementById('overlay').classList.add('hidden');
+    }
+
+    document.getElementById('btn-cancel')?.addEventListener('click', hideFormModal);
+    document.getElementById('overlay')?.addEventListener('click', hideFormModal);
+
+    injectButton('btn-actions', 'btn-add-template', () => {
+      const fields = [
+        { name: 'nom_categorie', label: 'Nom', type: 'text' },
+        {
+          name: 'type_categorie',
+          label: 'Type',
+          type: 'select',
+          options: [
+            { value: 'chaussures', label: 'Chaussure' },
+            { value: 'sacs', label: 'Sac' },
+            { value: 'vetements', label: 'Vêtement' },
+            { value: 'autre', label: 'Autre' }
+          ]
+        }
+      ];
+
+      showFormModal(fields, (data) => {
+        fetch('http://127.0.0.1:8000/stock/categorie/new/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer TON_TOKEN'
+          },
+          body: JSON.stringify(data)
+        }).then(res => {
+          if (res.ok) alert('Catégorie ajoutée avec succès');
+          else alert('Erreur d’ajout');
+        });
+      });
+    });
+  </script>
 </body>
 
 </html>
