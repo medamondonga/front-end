@@ -69,6 +69,10 @@
                     class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700">Annuler</button>
                 <button id="btn-soumettre-vente"
                     class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800">Soumettre Vente</button>
+                <a href="/pages/dashboard.html">
+                    <button
+                    class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800">Dashboard</button>
+                </a>
             </div>
         </section>
 
@@ -317,7 +321,7 @@
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                         // 🔁 Mets ici ton vrai token
+                        Authorization: "Bearer VOTRE_TOKEN_ICY" // 🔁 Mets ici ton vrai token
                     },
                     body: JSON.stringify(payload)
                 });
