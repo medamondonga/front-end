@@ -68,233 +68,265 @@
 
 
   <script type="module">
-      const COULEURS = [
-        "noir", "blanc", "gris", "bleu", "rouge", "vert", "jaune",
-        "rose", "orange", "violet", "marron", "beige", "turquoise",
-        "bordeaux", "or"
+    const COULEURS = [
+      "noir", "blanc", "gris", "bleu", "rouge", "vert", "jaune",
+      "rose", "orange", "violet", "marron", "beige", "turquoise",
+      "bordeaux", "or"
+    ];
+
+    import { loadNavbar } from "/assets/js/navbar.js";
+    import { loadHeader } from "/assets/js/header.js";
+    import { getArticles } from "/assets/js/api.js";
+    import { renderTable } from "/assets/js/table.js";
+    import { injectButton } from "/assets/js/utils.js";
+
+    // Chargement header et navbar
+    loadNavbar();
+    loadHeader();
+
+    // Remplissage tableau
+    getArticles().then((data) => {
+      const columns = [
+        "N°", "Nom", "Couleur", "Taille", "Categorie",
+        "Prix-Achat", "Prix-Vente", "Quantité"
       ];
 
-      import { loadNavbar } from "/assets/js/navbar.js";
-      import { loadHeader } from "/assets/js/header.js";
-      import { getArticles } from "/assets/js/api.js";
-      import { renderTable } from "/assets/js/table.js";
-      import { injectButton } from "/assets/js/utils.js";
+      const rows = data.map((a, index) => ({
+        object: a,
+        row: [
+          index + 1,
+          a.nom_article,
+          a.couleur,
+          a.taille,
+          a.categorie,
+          a.prix_achat_unitaire,
+          a.prix_vente_unitaire,
+          a.quantite_en_stock,
+        ],
+      }));
 
-      // Chargement header et navbar
-      loadNavbar();
-      loadHeader();
-
-      // Remplissage tableau
-      getArticles().then((data) => {
-        const columns = [
-          "N°", "Nom", "Couleur", "Taille", "Categorie",
-          "Prix-Achat", "Prix-Vente", "Quantité"
-        ];
-
-        const rows = data.map((a, index) => ({
-          object: a,
-          row: [
-            index + 1,
-            a.nom_article,
-            a.couleur,
-            a.taille,
-            a.categorie,
-            a.prix_achat_unitaire,
-            a.prix_vente_unitaire,
-            a.quantite_en_stock,
-          ],
-        }));
-
-        renderTable("article-table", columns, rows, (article) => {
-          openEditModal(article);
-        });
+      renderTable("article-table", columns, rows, (article) => {
+        openEditModal(article);
       });
+    });
 
-      function showFormModal(fields, onSubmit, categories = []) {
-        const modal = document.getElementById("form-modal");
-        const overlay = document.getElementById("overlay");
-        const form = document.getElementById("dynamic-form");
-        const title = document.getElementById("form-title");
-        const submit = document.getElementById("submit-form");
+    function showFormModal(fields, onSubmit, categories = []) {
+      const modal = document.getElementById("form-modal");
+      const overlay = document.getElementById("overlay");
+      const form = document.getElementById("dynamic-form");
+      const title = document.getElementById("form-title");
+      const submit = document.getElementById("submit-form");
 
-        form.innerHTML = "";
-        title.textContent = "Ajouter un article";
+      form.innerHTML = "";
+      title.textContent = "Ajouter un article";
 
-        const inputElements = {};
+      const inputElements = {};
 
-        fields.forEach((field) => {
-          let input;
+      fields.forEach((field) => {
+        let input;
 
-          if (field.type === "select") {
-            input = document.createElement("select");
-            input.name = field.name;
-            input.className = "w-full border border-gray-300 rounded px-4 py-2";
+        if (field.type === "select") {
+          input = document.createElement("select");
+          input.name = field.name;
+          input.className = "w-full border border-gray-300 rounded px-4 py-2";
 
-            (field.options || []).forEach((opt) => {
-              const option = document.createElement("option");
-              option.value = opt.value;
-              option.textContent = opt.label;
-              input.appendChild(option);
-            });
-          } else {
-            input = document.createElement("input");
-            input.name = field.name;
-            input.type = field.type;
-            input.placeholder = field.label;
-            input.className = "w-full border border-gray-300 rounded px-4 py-2";
-          }
-
-          inputElements[field.name] = input;
-          form.appendChild(input);
-        });
-
-        // Logique dynamique : mettre à jour les tailles en fonction de la catégorie sélectionnée
-        const categorieInput = inputElements["categorie"];
-        const tailleInput = inputElements["taille"];
-
-        if (categorieInput && tailleInput) {
-          categorieInput.addEventListener("change", () => {
-            const selectedId = parseInt(categorieInput.value);
-            const selectedCat = categories.find((c) => c.id === selectedId);
-
-            const tailles = {
-              chaussures: ["37", "38", "39", "40", "41"],
-              sacs: ["Petit", "Moyen", "Grand"],
-              vetement: ["S", "M", "L", "XL"],
-              autre: ["Unique"],
-            };
-
-            const tailleList = tailles[selectedCat?.type_categorie] || ["Unique"];
-
-            tailleInput.innerHTML = "";
-            tailleList.forEach((taille) => {
-              const opt = document.createElement("option");
-              opt.value = taille;
-              opt.textContent = taille;
-              tailleInput.appendChild(opt);
-            });
+          (field.options || []).forEach((opt) => {
+            const option = document.createElement("option");
+            option.value = opt.value;
+            option.textContent = opt.label;
+            input.appendChild(option);
           });
-
-          categorieInput.dispatchEvent(new Event("change"));
+        } else {
+          input = document.createElement("input");
+          input.name = field.name;
+          input.type = field.type;
+          input.placeholder = field.label;
+          input.className = "w-full border border-gray-300 rounded px-4 py-2";
         }
 
-        submit.onclick = function () {
-          const formData = {};
-          fields.forEach((field) => {
-            formData[field.name] = form.elements[field.name].value;
+        inputElements[field.name] = input;
+        form.appendChild(input);
+      });
+
+
+
+      // Logique dynamique : mettre à jour les tailles en fonction de la catégorie sélectionnée
+      const categorieInput = inputElements["categorie"];
+      const tailleInput = inputElements["taille"];
+
+      if (categorieInput && tailleInput) {
+        categorieInput.addEventListener("change", () => {
+          const selectedId = parseInt(categorieInput.value);
+          const selectedCat = categories.find((c) => c.id === selectedId);
+
+          const tailles = {
+            chaussures: ["37", "38", "39", "40", "41"],
+            sacs: ["Petit", "Moyen", "Grand"],
+            vetement: ["S", "M", "L", "XL"],
+            autre: ["Unique"],
+          };
+
+          const tailleList = tailles[selectedCat?.type_categorie] || ["Unique"];
+
+          tailleInput.innerHTML = "";
+          tailleList.forEach((taille) => {
+            const opt = document.createElement("option");
+            opt.value = taille;
+            opt.textContent = taille;
+            tailleInput.appendChild(opt);
           });
-          modal.classList.add("hidden");
-          overlay.classList.add("hidden");
-          onSubmit(formData);
-        };
-
-        modal.classList.remove("hidden");
-        overlay.classList.remove("hidden");
-      }
-
-      // ✅ Fonction déplacée ici
-      async function openEditModal(article) {
-        const res = await fetch('http://127.0.0.1:8000/stock/categorie/list/');
-        const categories = await res.json();
-
-        const categorieOptions = categories.map(c => ({
-          value: c.id,
-          label: `${c.nom_categorie} (${c.type_categorie})`,
-          type_categorie: c.type_categorie
-        }));
-
-        const couleurOptions = COULEURS.map(c => ({
-          value: c,
-          label: c.charAt(0).toUpperCase() + c.slice(1)
-        }));
-
-        const fields = [
-          { name: 'nom_article', label: 'Nom', type: 'text' },
-          { name: 'couleur', label: 'Couleur', type: 'select', options: couleurOptions },
-          { name: 'categorie', label: 'Catégorie', type: 'select', options: categorieOptions },
-          { name: 'taille', label: 'Taille', type: 'select', options: [] },
-          { name: 'prix_achat_unitaire', label: 'Prix achat', type: 'number' },
-          { name: 'prix_vente_unitaire', label: 'Prix vente', type: 'number' },
-          { name: 'quantite_en_stock', label: 'Quantité', type: 'number' }
-        ];
-
-        showFormModal(fields, (data) => {
-          fetch(`http://127.0.0.1:8000/stock/article/${article.id}/`, {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: 'Bearer TON_TOKEN'
-            },
-            body: JSON.stringify(data)
-          }).then(res => {
-            if (res.ok) {
-              alert("Article mis à jour avec succès");
-              location.reload();
-            } else {
-              alert("Erreur lors de la mise à jour");
-            }
-          });
-        }, categories);
-
-        const form = document.getElementById("dynamic-form");
-        fields.forEach(field => {
-          if (form.elements[field.name]) {
-            form.elements[field.name].value = article[field.name];
-          }
         });
 
-        document.getElementById("form-title").textContent = "Modifier l'article";
-        document.getElementById("submit-form").textContent = "Mettre à jour";
+        categorieInput.dispatchEvent(new Event("change"));
       }
 
-      function hideFormModal() {
-        document.getElementById("form-modal").classList.add("hidden");
-        document.getElementById("overlay").classList.add("hidden");
-      }
+      submit.onclick = function () {
+        const formData = {};
+        fields.forEach((field) => {
+          formData[field.name] = form.elements[field.name].value;
+        });
+        modal.classList.add("hidden");
+        overlay.classList.add("hidden");
+        onSubmit(formData);
+      };
 
-      document.getElementById("btn-cancel")?.addEventListener("click", hideFormModal);
-      document.getElementById("overlay")?.addEventListener("click", hideFormModal);
+      modal.classList.remove("hidden");
+      overlay.classList.remove("hidden");
+    }
 
-      // Bouton Ajouter
-      injectButton("btn-actions", "btn-add-template", async () => {
-        const res = await fetch("http://127.0.0.1:8000/stock/categorie/list/");
-        const categories = await res.json();
+    // ✅ Fonction déplacée ici
+    async function openEditModal(article) {
+      const res = await fetch('http://127.0.0.1:8000/stock/categorie/list/');
+      const categories = await res.json();
 
-        const categorieOptions = categories.map((c) => ({
-          value: c.id,
-          label: `${c.nom_categorie} (${c.type_categorie})`,
-          type_categorie: c.type_categorie,
-        }));
+      const categorieOptions = categories.map(c => ({
+        value: c.id,
+        label: `${c.nom_categorie} (${c.type_categorie})`,
+        type_categorie: c.type_categorie
+      }));
 
-        const couleurOptions = COULEURS.map((c) => ({
-          value: c,
-          label: c.charAt(0).toUpperCase() + c.slice(1),
-        }));
+      const couleurOptions = COULEURS.map(c => ({
+        value: c,
+        label: c.charAt(0).toUpperCase() + c.slice(1)
+      }));
 
-        const fields = [
-          { name: "nom_article", label: "Nom", type: "text" },
-          { name: "couleur", label: "Couleur", type: "select", options: couleurOptions },
-          { name: "categorie", label: "Catégorie", type: "select", options: categorieOptions },
-          { name: "taille", label: "Taille", type: "select", options: [] },
-          { name: "prix_achat_unitaire", label: "Prix achat", type: "number" },
-          { name: "prix_vente_unitaire", label: "Prix vente", type: "number" },
-          { name: "quantite_en_stock", label: "Quantité", type: "number" },
-        ];
+      const fields = [
+        { name: 'nom_article', label: 'Nom', type: 'text' },
+        { name: 'couleur', label: 'Couleur', type: 'select', options: couleurOptions },
+        { name: 'categorie', label: 'Catégorie', type: 'select', options: categorieOptions },
+        { name: 'taille', label: 'Taille', type: 'select', options: [] },
+        { name: 'prix_achat_unitaire', label: 'Prix achat', type: 'number' },
+        { name: 'prix_vente_unitaire', label: 'Prix vente', type: 'number' },
+        { name: 'quantite_en_stock', label: 'Quantité', type: 'number' }
+      ];
 
-        showFormModal(fields, (data) => {
-          fetch("http://127.0.0.1:8000/stock/article/new/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer TON_TOKEN",
-            },
-            body: JSON.stringify(data),
-          }).then((res) => {
-            if (res.ok) alert("Article ajouté avec succès");
-            else alert("Erreur d’ajout");
-          });
-        }, categories);
+      showFormModal(fields, (data) => {
+        fetch(`http://127.0.0.1:8000/stock/article/${article.id}/`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer TON_TOKEN'
+          },
+          body: JSON.stringify(data)
+        }).then(res => {
+          if (res.ok) {
+            alert("Article mis à jour avec succès");
+            location.reload();
+          } else {
+            alert("Erreur lors de la mise à jour");
+          }
+        });
+      }, categories);
+
+      // 👉 Remplissage des champs après affichage du formulaire
+      const form = document.getElementById("dynamic-form");
+
+      // Champs normaux
+      fields.forEach(field => {
+        if (form.elements[field.name]) {
+          form.elements[field.name].value = article[field.name];
+        }
       });
+
+      // Champ catégorie (sélectionner la bonne option)
+      const selectCategorie = form.elements["categorie"];
+      if (selectCategorie && article.categorie) {
+        const matchingOption = Array.from(selectCategorie.options).find(
+          opt => opt.value == article.categorie || opt.textContent.includes(article.categorie)
+        );
+        if (matchingOption) {
+          selectCategorie.value = matchingOption.value;
+        }
+      }
+
+      // Déclencher le changement de catégorie pour charger les tailles
+      selectCategorie?.dispatchEvent(new Event("change"));
+
+      // Champ taille (après que les options ont été mises à jour)
+      const selectTaille = form.elements["taille"];
+      if (selectTaille && article.taille) {
+        const tailleOption = Array.from(selectTaille.options).find(
+          opt => opt.value === article.taille
+        );
+        if (tailleOption) {
+          selectTaille.value = article.taille;
+        }
+      }
+
+      // Mettre à jour le titre du formulaire
+      document.getElementById("form-title").textContent = "Details de l'article";
+      document.getElementById("submit-form").textContent = "Mettre à jour";
+    }
+
+    function hideFormModal() {
+      document.getElementById("form-modal").classList.add("hidden");
+      document.getElementById("overlay").classList.add("hidden");
+    }
+
+    document.getElementById("btn-cancel")?.addEventListener("click", hideFormModal);
+    document.getElementById("overlay")?.addEventListener("click", hideFormModal);
+
+    // Bouton Ajouter
+    injectButton("btn-actions", "btn-add-template", async () => {
+      const res = await fetch("http://127.0.0.1:8000/stock/categorie/list/");
+      const categories = await res.json();
+
+      const categorieOptions = categories.map((c) => ({
+        value: c.id,
+        label: `${c.nom_categorie} (${c.type_categorie})`,
+        type_categorie: c.type_categorie,
+      }));
+
+      const couleurOptions = COULEURS.map((c) => ({
+        value: c,
+        label: c.charAt(0).toUpperCase() + c.slice(1),
+      }));
+
+      const fields = [
+        { name: "nom_article", label: "Nom", type: "text" },
+        { name: "couleur", label: "Couleur", type: "select", options: couleurOptions },
+        { name: "categorie", label: "Catégorie", type: "select", options: categorieOptions },
+        { name: "taille", label: "Taille", type: "select", options: [] },
+        { name: "prix_achat_unitaire", label: "Prix achat", type: "number" },
+        { name: "prix_vente_unitaire", label: "Prix vente", type: "number" },
+        { name: "quantite_en_stock", label: "Quantité", type: "number" },
+      ];
+
+
+      showFormModal(fields, (data) => {
+        fetch("http://127.0.0.1:8000/stock/article/new/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer TON_TOKEN",
+          },
+          body: JSON.stringify(data),
+        }).then((res) => {
+          if (res.ok) alert("Article ajouté avec succès");
+          else alert("Erreur d’ajout");
+        });
+      }, categories);
+    });
   </script>
 </body>
 

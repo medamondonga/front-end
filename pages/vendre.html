@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vendre</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#ED7B01',
+                        darkblue: '#1C236B'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+
+<body class="bg-gray-100 font-sans">
+    <div id="header"></div>
+    <div id="navbar"></div>
+
+    <!-- Main container -->
+    <main class="flex h-full p-6 gap-6">
+        <!-- Left Section -->
+        <section class="w-1/2 space-y-4">
+            <input type="text" id="search-input" placeholder="Rechercher un article..."
+                class="w-full px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring focus:border-primary" />
+
+            <div id="article-list" class="space-y-2 overflow-y-auto h-[75vh] border p-2 rounded bg-white shadow-sm">
+            </div>
+        </section>
+
+        <!-- Right Section -->
+        <section class="w-1/2 flex flex-col space-y-4">
+            <h2 class="text-xl font-bold text-darkblue">Détail de la vente</h2>
+
+            <!-- Liste des articles ajoutés -->
+            <div id="vente-details" class="space-y-2 bg-white p-4 rounded shadow-sm border h-[50vh] overflow-y-auto">
+            </div>
+
+            <!-- Total -->
+            <div class="text-right font-bold text-lg">
+                Total : <span id="total-vente">0 $</span>
+            </div>
+
+            <!-- Sélection du client -->
+            <div class="bg-white border p-4 rounded shadow-sm space-y-2">
+                <label for="client-search" class="text-sm text-gray-700">Client :</label>
+                <input type="text" id="client-search" placeholder="Rechercher un client..."
+                    class="w-full px-3 py-2 border rounded" />
+                <div id="client-results" class="max-h-32 overflow-y-auto text-sm text-gray-700"></div>
+                <button id="btn-nouveau-client" class="text-sm text-primary hover:underline">+ Nouveau client</button>
+                <p id="client-selectionne" class="text-sm text-green-700 font-semibold hidden">Client sélectionné :
+                    <span></span>
+                </p>
+            </div>
+
+            <!-- Boutons de soumission -->
+            <div class="flex justify-end gap-4 mt-2">
+                <button id="btn-annuler"
+                    class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700">Annuler</button>
+                <button id="btn-soumettre-vente"
+                    class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800">Soumettre Vente</button>
+            </div>
+        </section>
+
+
+    </main>
+
+    <!-- Modal -->
+    <div id="overlay" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 hidden"></div>
+    <div id="article-modal"
+        class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded shadow-lg w-full max-w-md z-50 hidden">
+        <h2 class="text-xl font-bold text-darkblue mb-4">Détail Article</h2>
+        <div id="article-details" class="space-y-2 text-sm text-gray-700">
+            <p><strong>Nom :</strong> <span id="modal-nom"></span></p>
+            <p><strong>Couleur :</strong> <span id="modal-couleur"></span></p>
+            <p><strong>Taille :</strong> <span id="modal-taille"></span></p>
+            <p><strong>Catégorie :</strong> <span id="modal-categorie"></span></p>
+            <p><strong>Prix Vente :</strong> <span id="modal-prix"></span></p>
+            <p><strong>Stock :</strong> <span id="modal-stock"></span></p>
+        </div>
+
+        <form id="article-form" class="mt-4 space-y-4">
+            <input type="number" id="input-quantite" placeholder="Quantité à vendre" min="1"
+                class="w-full px-4 py-2 border rounded" />
+            <input type="number" id="input-prix-recu" placeholder="Prix reçu unitaire" min="0"
+                class="w-full px-4 py-2 border rounded" />
+            <div class="flex justify-end gap-3">
+                <button type="button" id="btn-modal-cancel"
+                    class="px-4 py-2 bg-gray-400 text-white rounded">Annuler</button>
+                <button type="submit"
+                    class="px-4 py-2 bg-primary text-white rounded hover:bg-orange-800">Ajouter</button>
+            </div>
+        </form>
+    </div>
+
+    <script type="module">
+        import { loadNavbar } from '/assets/js/navbar.js';
+        import { loadHeader } from '/assets/js/header.js';
+        import { getArticles } from '/assets/js/api.js';
+        import { getClients } from '/assets/js/api.js';
+        //loadNavbar();
+        //loadHeader();
+        // === Données fictives d'exemple (à remplacer par un fetch depuis ton backend) ===
+
+        let selectedClientId = null;
+        let clients = [];
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            clients = await getClients();
+        });
+
+        // Recherche client
+        const clientInput = document.getElementById("client-search");
+        const clientResults = document.getElementById("client-results");
+        const clientSelectedDisplay = document.getElementById("client-selectionne");
+
+        clientInput.addEventListener("input", () => {
+            const search = clientInput.value.toLowerCase();
+            const filtered = clients.filter(c =>
+                c.nom_client.toLowerCase().includes(search)
+            );
+
+            clientResults.innerHTML = "";
+            filtered.forEach(c => {
+                const div = document.createElement("div");
+                div.className = "p-1 cursor-pointer hover:bg-gray-100";
+                div.textContent = c.nom_client + " - " + c.prenom_client + " - " + c.telephone;
+                div.onclick = () => {
+                    selectedClientId = c.id;
+                    clientSelectedDisplay.querySelector("span").textContent = c.nom_client + " - " + c.prenom_client;
+                    clientSelectedDisplay.classList.remove("hidden");
+                    clientResults.innerHTML = "";
+                    clientInput.value = "";
+                };
+                clientResults.appendChild(div);
+                selectedClientId = c.id;
+                console.log(selectedClientId);
+            });
+        });
+
+        // Création client (modal simplifié)
+        document.getElementById("btn-nouveau-client").addEventListener("click", async () => {
+            const nom = prompt("Nom du client :");
+            if (!nom) return;
+            const telephone = prompt("Téléphone :") || "";
+
+            try {
+                const nouveauClient = await createClient({ nom, telephone });
+                clients.push(nouveauClient);
+                selectedClientId = nouveauClient.id;
+                clientSelectedDisplay.querySelector("span").textContent = nouveauClient.nom;
+                clientSelectedDisplay.classList.remove("hidden");
+            } catch (e) {
+                alert("Erreur lors de la création du client.");
+            }
+        });
+        let articles = [];
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            articles = await getArticles();
+            renderArticleList(articles);
+        });
+
+        const articleList = document.getElementById("article-list");
+        const searchInput = document.getElementById("search-input");
+        const overlay = document.getElementById("overlay");
+        const modal = document.getElementById("article-modal");
+
+        let selectedArticle = null;
+        let vente = [];
+        let totalVente = 0;
+
+        // === Remplir la liste des articles ===
+        function renderArticleList(filtered = articles) {
+            articleList.innerHTML = "";
+            filtered.forEach(article => {
+                const div = document.createElement("div");
+                div.className = "p-3 border rounded hover:bg-gray-100 cursor-pointer";
+                div.textContent = `${article.nom_article} (${article.quantite_en_stock} en stock)`;
+                div.onclick = () => openModal(article);
+                articleList.appendChild(div);
+            });
+        }
+
+        // === Recherche dynamique ===
+        searchInput.addEventListener("input", () => {
+            const term = searchInput.value.toLowerCase();
+            const filtered = articles.filter(a => a.nom_article.toLowerCase().includes(term));
+            renderArticleList(filtered);
+        });
+
+        // === Ouvrir le modal avec les détails ===
+        function openModal(article) {
+            selectedArticle = article;
+            document.getElementById("modal-nom").textContent = article.nom_article;
+            document.getElementById("modal-couleur").textContent = article.couleur;
+            document.getElementById("modal-taille").textContent = article.taille;
+            document.getElementById("modal-categorie").textContent = article.categorie;
+            document.getElementById("modal-prix").textContent = article.prix_vente_unitaire + " $";
+            document.getElementById("modal-stock").textContent = article.quantite_en_stock;
+
+            document.getElementById("input-quantite").value = "";
+            document.getElementById("input-prix-recu").value = "";
+
+            overlay.classList.remove("hidden");
+            modal.classList.remove("hidden");
+        }
+
+        // === Fermer le modal ===
+        function closeModal() {
+            overlay.classList.add("hidden");
+            modal.classList.add("hidden");
+        }
+
+        document.getElementById("btn-modal-cancel").onclick = closeModal;
+
+        // === Soumettre un article à la vente ===
+        document.getElementById("article-form").addEventListener("submit", e => {
+            e.preventDefault();
+
+            const quantite = parseInt(document.getElementById("input-quantite").value);
+            const prixRecu = parseInt(document.getElementById("input-prix-recu").value);
+
+            if (!quantite || !prixRecu || quantite <= 0 || prixRecu < 0) {
+                alert("Quantité ou prix reçu invalide.");
+                return;
+            }
+
+            if (quantite > selectedArticle.quantite) {
+                alert("Stock insuffisant !");
+                return;
+            }
+
+            // Mettre à jour la quantité restante localement
+            selectedArticle.quantite -= quantite;
+
+            const item = {
+                id: selectedArticle.id,
+                nom: selectedArticle.nom_article,
+                quantite,
+                prixRecu,
+                total: quantite * prixRecu
+            };
+            vente.push(item);
+            totalVente += item.total;
+
+            updateVenteUI();
+            closeModal();
+        });
+
+        // === Afficher les éléments ajoutés à droite ===
+        function updateVenteUI() {
+            const venteContainer = document.getElementById("vente-details");
+            venteContainer.innerHTML = "";
+
+            vente.forEach(item => {
+                const div = document.createElement("div");
+                div.className = "flex justify-between border-b py-2 text-sm";
+                div.innerHTML = `
+      <div>${item.nom}</div>
+      <div>${item.quantite} x ${item.prixRecu} $</div>
+      <div class="font-semibold">${item.total} $</div>
+    `;
+                venteContainer.appendChild(div);
+            });
+
+            document.getElementById("total-vente").textContent = totalVente + " $";
+        }
+
+        // === Bouton Annuler ===
+        document.getElementById("btn-annuler").addEventListener("click", () => {
+            if (confirm("Annuler cette vente ?")) {
+                vente = [];
+                totalVente = 0;
+                renderArticleList(); // remettre les quantités
+                updateVenteUI();
+            }
+        });
+
+        // === Bouton Soumettre Vente ===
+        document.getElementById("btn-soumettre-vente").addEventListener("click", async () => {
+            if (vente.length === 0) {
+                alert("Ajoutez au moins un article.");
+                return;
+            }
+
+            if (!selectedClientId) {
+                alert("Veuillez sélectionner un client.");
+                return;
+            }
+
+            const payload = {
+                client: selectedClientId,   // ✅ just an integer
+                vendeur: 5,                 // à adapter dynamiquement
+                point_de_vente: 1,         // à adapter dynamiquement
+                articles: vente.map(item => ({
+                    article: item.id,
+                    quantite: item.quantite,
+                    prix_unitaire_recu: item.prixRecu
+                }))
+            };
+
+            console.log("Payload envoyé au backend :", payload);
+
+            try {
+                const response = await fetch("http://127.0.0.1:8000/stock/vente/new/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                         // 🔁 Mets ici ton vrai token
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    console.error("Erreur :", err);
+                    alert("❌ Une erreur s'est produite. Vérifie les données.");
+                    return;
+                }
+
+                alert("✅ Vente enregistrée avec succès !");
+
+                // 🧹 Nettoyage
+                vente = [];
+                totalVente = 0;
+                selectedClientId = null;
+
+                document.getElementById("vente-details").innerHTML = "";
+                document.getElementById("total-vente").textContent = "0 $";
+                document.getElementById("client-selectionne").classList.add("hidden");
+                document.getElementById("client-selectionne").querySelector("span").textContent = "";
+                document.getElementById("client-search").value = "";
+
+            } catch (error) {
+                console.error("Erreur lors de la requête :", error);
+                alert("❌ Échec de la requête.");
+            }
+        });
+
+
+    </script>
+
+</body>
+
+</html>

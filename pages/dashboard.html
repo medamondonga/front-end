@@ -32,6 +32,7 @@
   <main class="sm:pl-64 p-6 space-y-8 ml-4">
     <!-- Statistiques -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-24">
+      <!-- Bloc stat 1 -->
       <div class="bg-white rounded-2xl shadow-md p-5">
         <div class="flex items-center justify-between">
           <div>
@@ -45,6 +46,7 @@
         </div>
       </div>
 
+      <!-- Bloc stat 2 -->
       <div class="bg-white rounded-2xl shadow-md p-5">
         <div class="flex items-center justify-between">
           <div>
@@ -58,6 +60,7 @@
         </div>
       </div>
 
+      <!-- Bloc stat 3 -->
       <div class="bg-white rounded-2xl shadow-md p-5">
         <div class="flex items-center justify-between">
           <div>
@@ -71,6 +74,7 @@
         </div>
       </div>
 
+      <!-- Bloc stat 4 -->
       <div class="bg-white rounded-2xl shadow-md p-5">
         <div class="flex items-center justify-between">
           <div>
@@ -86,13 +90,11 @@
     </div>
 
     <!-- Table de ventes -->
-    <div class="grid lg:grid-cols-3 gap-6" >
+    <div class="grid lg:grid-cols-3 gap-6">
       <!-- Ventes récentes -->
-      <div class="bg-white rounded-2xl shadow-md p-6 lg:col-span-2 " >
+      <div class="bg-white rounded-2xl shadow-md p-6 lg:col-span-2 ">
         <h2 class="text-darkblue font-semibold text-lg mb-4">Ventes récentes</h2>
-        <!-- Tableau -->
         <div id="client-table"></div>
-        
         <div class="text-right mt-4">
           <a href="/pages/ventes.html" class="text-primary hover:underline font-medium">Voir tout</a>
         </div>
@@ -102,19 +104,28 @@
       <div class="bg-white rounded-2xl shadow-md p-6">
         <h2 class="text-darkblue font-semibold text-lg mb-4">Produits les plus vendus</h2>
         <ul class="space-y-2 text-darkblue text-sm">
-          <li class="flex justify-between">
-            <span>Ordinateur</span><span class="font-medium">1107 F</span>
-          </li>
-          <li class="flex justify-between">
-            <span>iPhone</span><span class="font-medium">2345 F</span>
-          </li>
-          <li class="flex justify-between">
-            <span>Pantalon</span><span class="font-medium">2312 F</span>
-          </li>
-          <!-- Continue avec les autres produits -->
+          <li class="flex justify-between"><span>Ordinateur</span><span class="font-medium">1107 F</span></li>
+          <li class="flex justify-between"><span>iPhone</span><span class="font-medium">2345 F</span></li>
+          <li class="flex justify-between"><span>Pantalon</span><span class="font-medium">2312 F</span></li>
         </ul>
       </div>
     </div>
+  </main>
+
+  <!-- Modal de détail de vente -->
+  <div id="overlay" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 hidden"></div>
+
+  <div id="form-modal"
+    class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg z-50 w-full max-w-md p-6 hidden">
+    <h2 id="form-title" class="text-xl font-bold text-darkblue mb-4">Titre</h2>
+    <form id="dynamic-form" class="space-y-4"></form>
+    <div class="flex justify-end mt-4">
+      <button id="submit-form" type="button"
+        class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800 transition">OK</button>
+      <button id="btn-cancel" type="button"
+        class="hidden bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">Annuler</button>
+    </div>
+  </div>
   </main>
 
   <!-- Scripts JS -->
@@ -123,19 +134,88 @@
     import { loadHeader } from '/assets/js/header.js';
     import { getVentes } from '/assets/js/api.js';
     import { renderTable } from '/assets/js/table.js';
+
     loadNavbar();
     loadHeader();
 
-    getVentes().then(data => {
-            const columns = ['N°', 'Date', 'Client', 'Total'];
-            const rows = data.map((a, index) => [
-                index + 1,
-                a.date_vente,
-                a.client,
-                a.prix_total_vente,
-            ]);
-            renderTable('client-table', columns, rows);
+    // Afficher les 8 dernières ventes
+    getVentes().then((data) => {
+      const recent = data.slice(-5).reverse(); // 8 dernières ventes (ordre décroissant)
+
+      const columns = ['N°', 'Date', 'Client', 'Total'];
+      const rows = recent.map((vente, index) => ({
+        object: vente,
+        row: [
+          index + 1,
+          vente.date_vente,
+          vente.client,
+          vente.prix_total_vente,
+        ],
+      }));
+
+      renderTable('client-table', columns, rows, (vente) => {
+        showVenteDetailsModal(vente);
+      });
+    });
+
+    // Affichage des détails de vente
+    function showVenteDetailsModal(vente) {
+      const modal = document.getElementById('form-modal');
+      const overlay = document.getElementById('overlay');
+      const title = document.getElementById('form-title');
+      const form = document.getElementById('dynamic-form');
+      const submit = document.getElementById('submit-form');
+      const cancel = document.getElementById('btn-cancel');
+
+      if (!modal || !overlay || !title || !form || !submit) {
+        console.error("Un des éléments du modal est introuvable.");
+        return;
+      }
+
+      title.textContent = 'Détail de la vente';
+      submit.textContent = 'OK';
+      if (cancel) cancel.classList.add('hidden');
+
+      form.innerHTML = `
+    <p><strong>Client :</strong> ${vente.client}</p>
+    <p><strong>Date :</strong> ${vente.date_vente}</p>
+    <p><strong>Prix total :</strong> ${vente.prix_total_vente} FC</p>
+    <hr class="my-4"/>
+    <p class="font-semibold text-darkblue">Articles vendus :</p>
+    <ul id="vente-items-list" class="list-disc list-inside text-sm mt-2"></ul>
+  `;
+
+      fetch(`http://127.0.0.1:8000/stock/venteitems/?vente_id=${vente.id}`)
+        .then((res) => res.json())
+        .then((items) => {
+          const list = document.getElementById('vente-items-list');
+          if (!list) return;
+
+          list.innerHTML = '';
+          items.forEach((item) => {
+            const li = document.createElement('li');
+            li.textContent = `${item.article} (taille ${item.taille}) - ${item.quantite} x ${item.prix_vente_unitaire} FC`;
+            list.appendChild(li);
+          });
         });
+
+      modal.classList.remove('hidden');
+      overlay.classList.remove('hidden');
+
+      submit.onclick = () => {
+        modal.classList.add('hidden');
+        overlay.classList.add('hidden');
+        if (cancel) cancel.classList.remove('hidden');
+      };
+    }
+
+    // Fermer le modal si clic sur overlay
+    document.getElementById('overlay')?.addEventListener('click', () => {
+      document.getElementById('form-modal')?.classList.add('hidden');
+      document.getElementById('overlay')?.classList.add('hidden');
+      document.getElementById('btn-cancel')?.classList.remove('hidden');
+    });
+
 
   </script>
 
