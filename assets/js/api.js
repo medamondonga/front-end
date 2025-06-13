@@ -57,4 +57,18 @@ export async function getVentes() {
     return [];
   }
 }
+export async function getDepenses() {
+  try {
+    const response = await fetch("http://127.0.0.1:8000/stock/depenses/list/", {
+      headers: {
+        Authorization: "Bearer VOTRE_TOKEN_ICY"
+      }
+    });
+    if (!response.ok) throw new Error("Erreur lors du chargement des depenses");
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
 

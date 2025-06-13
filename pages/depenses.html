@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Liste des depenses</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#ED7B01',
+                        darkblue: '#1C236B'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+
+<body class="bg-gray-100 font-sans">
+
+    <!-- Header (fixe) -->
+    <div id="header"></div>
+
+    <!-- Navbar latérale (fixe à gauche) -->
+    <div id="navbar"></div>
+
+    <!-- Contenu principal -->
+    <main class="sm:pl-64 pt-[112px] p-6">
+
+        <!-- En-tête titre + bouton aligné à droite -->
+        <div class="flex justify-between items-center pt-10 ml-6 mr-6">
+            <h1 class="text-2xl font-bold text-darkblue">Historique des depenses</h1>
+
+            <button id="btn-open-modal"
+                class="bg-primary text-white px-6 py-2 rounded-2xl shadow hover:bg-orange-800 transition font-semibold">
+                Ajouter une depense
+            </button>
+
+
+        </div>
+
+
+
+        <!-- Tableau -->
+        <div id="ventes-table" class="w-full mt-10"></div>
+    </main>
+
+    <!-- Modal pour formulaire dynamique -->
+    <div id="overlay" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 hidden"></div>
+
+    <div id="form-modal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+    bg-white rounded-lg shadow-lg z-50 w-full max-w-md p-6 hidden">
+        <h2 id="form-title" class="text-xl font-bold text-darkblue mb-4">Ajouter</h2>
+        <form id="dynamic-form" class="space-y-4"></form>
+        <div class="flex justify-end mt-4 gap-3">
+            <button type="button" id="btn-cancel"
+                class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">Annuler</button>
+            <button id="submit-form"
+                class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800 transition">Ajouter</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module">
+        import { loadNavbar } from '/assets/js/navbar.js';
+        import { loadHeader } from '/assets/js/header.js';
+        import { getDepenses } from '/assets/js/api.js';
+        import { renderTable } from '/assets/js/table.js';
+
+        // Chargement header et navbar
+        loadNavbar();
+        loadHeader();
+
+        // Chargement des ventes et affichage du tableau
+        getDepenses().then(data => {
+            const columns = ['N°', 'Date', 'Motif', 'Motant', 'Point de vente'];
+
+            const rows = data.map((depense, index) => ({
+                object: depense,
+                row: [
+                    index + 1,
+                    depense.date_depense,
+                    depense.motif_depense,
+                    depense.montant,
+                    depense.point_de_vente,
+                ]
+            }));
+
+            renderTable('ventes-table', columns, rows, (depense) => {
+                showVenteDetailsModal(depense);
+            });
+        });
+
+        function showVenteDetailsModal(depense) {
+            const modal = document.getElementById('form-modal');
+            const overlay = document.getElementById('overlay');
+            const title = document.getElementById('form-title');
+            const form = document.getElementById('dynamic-form');
+            const submit = document.getElementById('submit-form');
+            const cancel = document.getElementById('btn-cancel');
+
+            // Mise à jour du titre
+            title.textContent = 'Détail de la depense';
+            submit.textContent = 'OK';
+            cancel.classList.add('hidden');
+
+            // Vider le formulaire
+            form.innerHTML = '';
+
+            // Bloc principal
+            const blocInfos = document.createElement('div');
+            blocInfos.innerHTML = `
+    <p><strong>Date :</strong> ${depense.date_depense}</p>
+    <p><strong>Motif :</strong> ${depense.motif_depense}</p>
+    <p><strong>Motant :</strong> ${depense.montant} $</p>
+    <p><strong>Motant :</strong> ${depense.point_de_vente}</p>
+    <hr class="my-4"/>
+  `;
+            form.appendChild(blocInfos);
+
+
+
+            // Affiche le modal
+            modal.classList.remove('hidden');
+            overlay.classList.remove('hidden');
+
+            // Bouton OK ferme le modal
+            submit.onclick = () => {
+                modal.classList.add('hidden');
+                overlay.classList.add('hidden');
+                cancel.classList.remove('hidden');
+            };
+        };
+
+
+        // Fermer le modal si on clique à l'extérieur
+        document.getElementById('overlay')?.addEventListener('click', () => {
+            document.getElementById('form-modal').classList.add('hidden');
+            document.getElementById('overlay').classList.add('hidden');
+            document.getElementById('btn-cancel').classList.remove('hidden');
+        });
+        // Ouverture du modal au clic sur le bouton
+        document.getElementById('btn-open-modal')?.addEventListener('click', () => {
+            const modal = document.getElementById('form-modal');
+            const overlay = document.getElementById('overlay');
+            const form = document.getElementById('dynamic-form');
+            const title = document.getElementById('form-title');
+            const submit = document.getElementById('submit-form');
+            const cancel = document.getElementById('btn-cancel');
+
+            // Préparation du formulaire
+            title.textContent = 'Ajouter une dépense';
+            cancel.classList.remove('hidden');
+            submit.textContent = 'Ajouter';
+
+            form.innerHTML = `
+        <label class="block">
+            <span class="text-gray-700">Motif</span>
+            <input type="text" name="motif" class="mt-1 block w-full border rounded px-3 py-2" required>
+        </label>
+        <label class="block">
+            <span class="text-gray-700">Montant</span>
+            <input type="number" name="montant" class="mt-1 block w-full border rounded px-3 py-2" required>
+        </label>
+        <label class="block">
+            <span class="text-gray-700">Point de vente</span>
+            <input type="text" name="point_de_vente" class="mt-1 block w-full border rounded px-3 py-2" required>
+        </label>
+    `;
+
+            // Affichage du modal
+            modal.classList.remove('hidden');
+            overlay.classList.remove('hidden');
+
+            // Soumission du formulaire
+            submit.onclick = async () => {
+                const motif = form.querySelector('input[name="motif"]').value;
+                const montant = form.querySelector('input[name="montant"]').value;
+                const pointDeVente = form.querySelector('input[name="point_de_vente"]').value;
+
+                const payload = {
+                    motif_depense: motif,
+                    montant: parseFloat(montant),
+                    point_de_vente: pointDeVente
+                };
+
+                try {
+                    const response = await fetch('http://localhost:8000/stock/depense/new/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            // ajoute ton token ici si auth :
+                            // 'Authorization': 'Bearer ton_token'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) throw new Error('Erreur lors de l’ajout');
+
+                    alert('Dépense ajoutée avec succès ✅');
+
+                    // Fermer le modal
+                    modal.classList.add('hidden');
+                    overlay.classList.add('hidden');
+
+                    // Optionnel : reload la page ou recharge les données
+                    location.reload();
+
+                } catch (error) {
+                    alert('Erreur lors de la soumission : ' + error.message);
+                }
+            };
+        });
+
+
+    </script>
+
+</body>
+
+</html>

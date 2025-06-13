@@ -50,7 +50,7 @@
 
 
     <!-- Tableau -->
-    <div id="client-table" class="w-full mt-10"></div>
+    <div id="ventes-table" class="w-full mt-10"></div>
   </main>
 
   <!-- Modal pour formulaire dynamique -->
@@ -93,7 +93,7 @@
         ]
       }));
 
-      renderTable('client-table', columns, rows, (vente) => {
+      renderTable('ventes-table', columns, rows, (vente) => {
         showVenteDetailsModal(vente);
       });
     });
@@ -119,7 +119,7 @@
       blocInfos.innerHTML = `
     <p><strong>Client :</strong> ${vente.client}</p>
     <p><strong>Date :</strong> ${vente.date_vente}</p>
-    <p><strong>Prix total :</strong> ${vente.prix_total_vente} FC</p>
+    <p><strong>Prix total :</strong> ${vente.prix_total_vente} $</p>
     <hr class="my-4"/>
     <p class="font-semibold text-darkblue">Articles vendus :</p>
     <ul id="vente-items-list" class="list-disc list-inside text-sm mt-2"></ul>
@@ -134,7 +134,7 @@
           list.innerHTML = '';
           items.forEach(item => {
             const li = document.createElement('li');
-            li.textContent = `${item.article} (taille ${item.taille}) - ${item.quantite} x ${item.prix_unitaire_recu} FC`;
+            li.textContent = `${item.article} (taille ${item.taille}) - ${item.quantite} x ${item.prix_unitaire_recu}$ = ${item.quantite*item.prix_unitaire_recu} $`;
             list.appendChild(li);
           });
         });
