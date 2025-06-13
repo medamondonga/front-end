@@ -1,9 +1,12 @@
+const token = localStorage.getItem("access");
 export async function getArticles() {
   try {
+    
     const response = await fetch("http://127.0.0.1:8000/stock/articles/", {
       headers: {
-        Authorization: "Bearer VOTRE_TOKEN_ICY"
-      }
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
     });
     if (!response.ok) throw new Error("Erreur lors du chargement des articles");
     return await response.json();
@@ -15,12 +18,17 @@ export async function getArticles() {
 
 export async function getCategories() {
   try {
-    const response = await fetch("http://127.0.0.1:8000/stock/categorie/list/", {
-      headers: {
-        Authorization: "Bearer VOTRE_TOKEN_ICY"
+    const response = await fetch(
+      "http://127.0.0.1:8000/stock/categorie/list/",
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
       }
-    });
-    if (!response.ok) throw new Error("Erreur lors du chargement des categories");
+    );
+    if (!response.ok)
+      throw new Error("Erreur lors du chargement des categories");
     return await response.json();
   } catch (error) {
     console.error(error);
@@ -32,8 +40,9 @@ export async function getClients() {
   try {
     const response = await fetch("http://127.0.0.1:8000/stock/clients/", {
       headers: {
-        Authorization: "Bearer VOTRE_TOKEN_ICY"
-      }
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
     });
     if (!response.ok) throw new Error("Erreur lors du chargement des clients");
     return await response.json();
@@ -47,8 +56,9 @@ export async function getVentes() {
   try {
     const response = await fetch("http://127.0.0.1:8000/stock/ventes/list/", {
       headers: {
-        Authorization: "Bearer VOTRE_TOKEN_ICY"
-      }
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
     });
     if (!response.ok) throw new Error("Erreur lors du chargement des ventes");
     return await response.json();
@@ -61,8 +71,9 @@ export async function getDepenses() {
   try {
     const response = await fetch("http://127.0.0.1:8000/stock/depenses/list/", {
       headers: {
-        Authorization: "Bearer VOTRE_TOKEN_ICY"
-      }
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
     });
     if (!response.ok) throw new Error("Erreur lors du chargement des depenses");
     return await response.json();
