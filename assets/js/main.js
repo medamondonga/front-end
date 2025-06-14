@@ -57,6 +57,7 @@ document.addEventListener("submit", async (e) => {
   }
 
   // 📝 Inscription
+  // 📝 Inscription
   if (form.id === "signupForm") {
     const email = form.email.value;
     const password = form.password.value;
@@ -73,7 +74,25 @@ document.addEventListener("submit", async (e) => {
       if (response.ok) {
         const data = await response.json();
         console.log("Inscription réussie :", data);
-        window.location.href = "/pages/welcome.html";
+
+        // 🔑 Auto-login juste après inscription
+        const tokenResponse = await fetch(`${basic_endpoint}/api/token/`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+
+        if (tokenResponse.ok) {
+          const tokenData = await tokenResponse.json();
+          localStorage.setItem("access", tokenData.access);
+          localStorage.setItem("refresh", tokenData.refresh);
+
+          console.log("Connexion automatique réussie :", tokenData);
+          window.location.href = "/pages/welcome.html";
+        } else {
+          alert("Inscription réussie mais connexion impossible. Veuillez vous connecter manuellement.");
+          window.location.href = "/pages/login.html";
+        }
       } else {
         const errorData = await response.json();
         alert("Inscription échouée : " + (errorData.detail || "Erreur inconnue."));
@@ -83,6 +102,7 @@ document.addEventListener("submit", async (e) => {
       alert("Une erreur s'est produite.");
     }
   }
+
 });
 
 // ✅ Charger les infos de l'utilisateur connecté
@@ -108,6 +128,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       userPhoto.src = data.profile_photo_url;
     }
   } catch (error) {
-    
+
   }
 });

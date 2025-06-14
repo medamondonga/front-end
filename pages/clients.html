@@ -51,7 +51,7 @@
   <script type="module">
     import { loadNavbar } from '/assets/js/navbar.js';
     import { loadHeader } from '/assets/js/header.js';
-    import { getClients } from '/assets/js/api.js';
+    import { getClients, authFetch } from '/assets/js/api.js';
     import { renderTable } from '/assets/js/table.js';
     import { injectButton } from '/assets/js/utils.js';
 
@@ -141,13 +141,9 @@
 
     function openEditModal(client) {
       showFormModal(fieldsConfig, (data) => {
-        fetch(`http://127.0.0.1:8000/stock/client/update/${client.id}/`, {
+        authFetch(`http://127.0.0.1:8000/stock/client/${client.id}/`, {
           method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer TON_TOKEN'
-          },
-          body: JSON.stringify(data)
+          body: JSON.stringify(data),
         }).then(res => {
           if (res.ok) {
             alert('Client mis à jour avec succès');
@@ -167,19 +163,18 @@
 
     injectButton('btn-actions', 'btn-add-template', () => {
       showFormModal(fieldsConfig, (data) => {
-        fetch('http://127.0.0.1:8000/stock/client/new/', {
+        authFetch('http://127.0.0.1:8000/stock/client/new/', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer TON_TOKEN'
-          },
-          body: JSON.stringify(data)
+          body: JSON.stringify(data),
         }).then(res => {
-          if (res.ok) alert('Client ajouté avec succès');
-          else alert('Erreur d’ajout');
+          if (res.ok) {
+            alert('Client ajouté avec succes');
+            location.reload();
+          } else alert("Erreur lors de l'ajout du client");
+        });
         });
       });
-    });
+
   </script>
 </body>
 

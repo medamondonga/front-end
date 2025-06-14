@@ -123,37 +123,33 @@
   <script type="module">
     import { loadNavbar } from '/assets/js/navbar.js';
     import { loadHeader } from '/assets/js/header.js';
-    import { getVentes } from '/assets/js/api.js';
+    import { getVentes, authFetch } from '/assets/js/api.js';
     import { renderTable } from '/assets/js/table.js';
-    
+
     async function chargerTopProduits() {
-  try {
-    const token = localStorage.getItem("access");
-    const response = await fetch("http://localhost:8000/stock/ventes/top/", {
-      headers: {
-        Authorization: `Bearer ${token}`
+      try {
+        const token = localStorage.getItem("access");
+        const response = await authFetch("http://localhost:8000/stock/ventes/top/");
+        const produits = await response.json();
+
+        const container = document.querySelector("#top-produits");
+        container.innerHTML = "";
+
+        produits.forEach((produit) => {
+          const li = document.createElement("li");
+          li.className = "flex justify-between";
+          li.innerHTML = `<span>${produit.article__nom_article}</span><span class="font-medium">${produit.total_vendus}</span>`;
+          container.appendChild(li);
+        });
+      } catch (error) {
+        console.error("Erreur chargement des produits populaires :", error);
       }
-    });
-    const produits = await response.json();
+    }
 
-    const container = document.querySelector("#top-produits");
-    container.innerHTML = "";
 
-    produits.forEach((produit) => {
-      const li = document.createElement("li");
-      li.className = "flex justify-between";
-      li.innerHTML = `<span>${produit.article__nom_article}</span><span class="font-medium">${produit.total_vendus}</span>`;
-      container.appendChild(li);
-    });
-  } catch (error) {
-    console.error("Erreur chargement des produits populaires :", error);
-  }
-}
-
-    
     async function chargerStats() {
       try {
-        const response = await fetch('http://localhost:8000/stock/stats/');
+        const response = await authFetch('http://localhost:8000/stock/stats/');
         const data = await response.json();
 
         document.getElementById('stat-articles').textContent = data.articles;
@@ -222,16 +218,21 @@
     <ul id="vente-items-list" class="list-disc list-inside text-sm mt-2"></ul>
   `;
 
-      fetch(`http://127.0.0.1:8000/stock/venteitems/?vente_id=${vente.id}`)
-        .then((res) => res.json())
+      authFetch(`http://127.0.0.1:8000/stock/venteitems/?vente_id=${vente.id}`).then((res) => {
+          if (!res.ok) {
+            throw new Error(`Erreur ${res.status}: ${res.statusText}`);
+          }
+          return res.json();
+        })
         .then((items) => {
           const list = document.getElementById('vente-items-list');
           if (!list) return;
 
+
           list.innerHTML = '';
           items.forEach((item) => {
             const li = document.createElement('li');
-            li.textContent = `${item.article} (taille ${item.taille}) - ${item.quantite} x ${item.prix_unitaire_recu}$ = ${item.quantite*item.prix_unitaire_recu} $`;
+            li.textContent = `${item.article} (taille ${item.taille}) - ${item.quantite} x ${item.prix_unitaire_recu}$ = ${item.quantite * item.prix_unitaire_recu} $`;
             list.appendChild(li);
           });
         });

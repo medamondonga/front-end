@@ -73,6 +73,19 @@
       "rose", "orange", "violet", "marron", "beige", "turquoise",
       "bordeaux", "or"
     ];
+    const token = localStorage.getItem("access");
+    function authFetch(url, options = {}) {
+      const token = localStorage.getItem("access");
+      return fetch(url, {
+        ...options,
+        headers: {
+          ...(options.headers || {}),
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+      });
+    }
+
 
     import { loadNavbar } from "/assets/js/navbar.js";
     import { loadHeader } from "/assets/js/header.js";
@@ -196,7 +209,7 @@
 
     // ✅ Fonction déplacée ici
     async function openEditModal(article) {
-      const res = await fetch('http://127.0.0.1:8000/stock/categorie/list/');
+      const res = await authFetch('http://127.0.0.1:8000/stock/categorie/list/');
       const categories = await res.json();
 
       const categorieOptions = categories.map(c => ({
@@ -221,12 +234,8 @@
       ];
 
       showFormModal(fields, (data) => {
-        fetch(`http://127.0.0.1:8000/stock/article/${article.id}/`, {
+        authFetch(`http://127.0.0.1:8000/stock/article/${article.id}/`, {
           method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer TON_TOKEN'
-          },
           body: JSON.stringify(data)
         }).then(res => {
           if (res.ok) {
@@ -288,7 +297,7 @@
 
     // Bouton Ajouter
     injectButton("btn-actions", "btn-add-template", async () => {
-      const res = await fetch("http://127.0.0.1:8000/stock/categorie/list/");
+      const res = await authFetch("http://127.0.0.1:8000/stock/categorie/list/");
       const categories = await res.json();
 
       const categorieOptions = categories.map((c) => ({
@@ -314,17 +323,14 @@
 
 
       showFormModal(fields, (data) => {
-        fetch("http://127.0.0.1:8000/stock/article/new/", {
+        authFetch("http://127.0.0.1:8000/stock/article/new/", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer TON_TOKEN",
-          },
           body: JSON.stringify(data),
-        }).then((res) => {
-          if (res.ok) alert("Article ajouté avec succès");
-          else alert("Erreur d’ajout");
-        });
+        })
+          .then((res) => {
+            if (res.ok) alert("Article ajouté avec succès");
+            else alert("Erreur d’ajout");
+          });
       }, categories);
     });
   </script>

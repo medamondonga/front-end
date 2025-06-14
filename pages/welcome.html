@@ -26,12 +26,12 @@
 
         <!-- Logo -->
         <div class="flex justify-start">
-            <img src="/images/logo_trans.png" alt="Logo" class="w-40 h-auto">
+            <img src="/assets/images/logo_trans.png" alt="Logo" class="w-40 h-auto">
         </div>
 
         <!-- Photo de profil + bouton ajouter -->
         <div class="relative w-32 h-32 mx-auto">
-            <img id="profile-pic" src="/images/avatar.png" alt="Profil"
+            <img id="profile-pic" src="/assets/images/avatar.png" alt="Profil"
                 class="rounded-full w-full h-full object-cover border-4 border-darkblue">
 
             <!-- Bouton ajouter -->
@@ -55,7 +55,34 @@
 
     </div>
 
-    <script src="/js/main.js"></script>
+    <script>
+        // ✅ Charger les infos de l'utilisateur connecté
+        document.addEventListener("DOMContentLoaded", async () => {
+            const token = localStorage.getItem("access");
+            const userNameElement = document.getElementById("username"); // corrigé ici ✅
+
+            if (!token || !userNameElement) return;
+
+            try {
+                const response = await fetch("http://127.0.0.1:8000/accounts/me/", {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error("Token invalide ou expiré");
+
+                const data = await response.json();
+                userNameElement.textContent = `${data.first_name} ${data.last_name}` || "Utilisateur";
+
+                const userPhoto = document.getElementById("profile-pic");
+                if (userPhoto && data.profile_photo_url) {
+                    userPhoto.src = data.profile_photo_url;
+                }
+            } catch (error) {
+                console.error("Erreur lors du chargement de l'utilisateur :", error);
+            }
+        });
+
+    </script>
 </body>
 
 </html>

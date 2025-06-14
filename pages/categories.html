@@ -36,19 +36,22 @@
   </main>
 
   <div id="overlay" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 hidden"></div>
-  <div id="form-modal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg z-50 w-full max-w-md p-6 hidden">
+  <div id="form-modal"
+    class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg z-50 w-full max-w-md p-6 hidden">
     <h2 id="form-title" class="text-xl font-bold text-darkblue mb-4">Ajouter</h2>
     <form id="dynamic-form" class="space-y-4"></form>
     <div class="flex justify-end mt-4 gap-3">
-      <button type="button" id="btn-cancel" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">Annuler</button>
-      <button id="submit-form" class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800 transition">Ajouter</button>
+      <button type="button" id="btn-cancel"
+        class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">Annuler</button>
+      <button id="submit-form"
+        class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800 transition">Ajouter</button>
     </div>
   </div>
 
   <script type="module">
     import { loadNavbar } from '/assets/js/navbar.js';
     import { loadHeader } from '/assets/js/header.js';
-    import { getCategories } from '/assets/js/api.js';
+    import { getCategories, authFetch } from '/assets/js/api.js';
     import { renderTable } from '/assets/js/table.js';
     import { injectButton } from '/assets/js/utils.js';
 
@@ -127,13 +130,9 @@
       ];
 
       showFormModal(fields, (data) => {
-        fetch(`http://127.0.0.1:8000/stock/categorie/update/${categorie.id}/`, {
+        authFetch(`http://127.0.0.1:8000/stock/categorie/${categorie.id}/`, {
           method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer TON_TOKEN'
-          },
-          body: JSON.stringify(data)
+          body: JSON.stringify(data),
         }).then(res => {
           if (res.ok) {
             alert("Catégorie mise à jour avec succès");
@@ -180,13 +179,9 @@
       ];
 
       showFormModal(fields, (data) => {
-        fetch('http://127.0.0.1:8000/stock/categorie/new/', {
+        authFetch('http://127.0.0.1:8000/stock/categorie/new/', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer TON_TOKEN'
-          },
-          body: JSON.stringify(data)
+          body: JSON.stringify(data),
         }).then(res => {
           if (res.ok) alert('Catégorie ajoutée avec succès');
           else alert('Erreur d’ajout');

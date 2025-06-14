@@ -73,7 +73,7 @@
     <script type="module">
         import { loadNavbar } from '/assets/js/navbar.js';
         import { loadHeader } from '/assets/js/header.js';
-        import { getDepenses } from '/assets/js/api.js';
+        import { getDepenses, authFetch } from '/assets/js/api.js';
         import { renderTable } from '/assets/js/table.js';
 
         // Chargement header et navbar
@@ -194,14 +194,9 @@
                 };
 
                 try {
-                    const response = await fetch('http://localhost:8000/stock/depense/new/', {
+                    const response = await authFetch('http://localhost:8000/stock/depense/new/', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            // ajoute ton token ici si auth :
-                            // 'Authorization': 'Bearer ton_token'
-                        },
-                        body: JSON.stringify(payload)
+                        body: JSON.stringify(payload),
                     });
 
                     if (!response.ok) throw new Error('Erreur lors de l’ajout');

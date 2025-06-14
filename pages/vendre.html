@@ -70,8 +70,7 @@
                 <button id="btn-soumettre-vente"
                     class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800">Soumettre Vente</button>
                 <a href="/pages/dashboard.html">
-                    <button
-                    class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800">Dashboard</button>
+                    <button class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800">Dashboard</button>
                 </a>
             </div>
         </section>
@@ -106,254 +105,297 @@
             </div>
         </form>
     </div>
+    <div id="overlay-client" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 hidden"></div>
 
-    <script type="module">
-        import { loadNavbar } from '/assets/js/navbar.js';
-        import { loadHeader } from '/assets/js/header.js';
-        import { getArticles } from '/assets/js/api.js';
-        import { getClients } from '/assets/js/api.js';
-        //loadNavbar();
-        //loadHeader();
-        // === Données fictives d'exemple (à remplacer par un fetch depuis ton backend) ===
+    <!-- Modal formulaire client -->
+    <div id="modal-client" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+  bg-white rounded-lg shadow-lg z-50 w-full max-w-md p-6 hidden">
+        <h2 id="form-title-client" class="text-xl font-bold text-darkblue mb-4">Ajouter un client</h2>
+        <form id="form-client" class="space-y-4">
+            <input type="text" name="nom_client" placeholder="Nom" required class="w-full px-4 py-2 border rounded" />
+            <input type="text" name="prenom_client" placeholder="Prenom" required
+                class="w-full px-4 py-2 border rounded" />
+            <select name="sexe" required class="w-full px-4 py-2 border rounded">
+                <option value="">-- Sélectionner le sexe --</option>
+                <option value="homme">Homme</option>
+                <option value="femme">Femme</option>
+            </select>
+            <input type="text" name="telephone" placeholder="Téléphone" class="w-full px-4 py-2 border rounded" />
+            <input type="text" name="adresse" placeholder="Adresse" class="w-full px-4 py-2 border rounded" />
+            <div class="flex justify-end gap-3 pt-4">
+                <button type="button" id="cancel-client"
+                    class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Annuler</button>
+                <button type="submit"
+                    class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800">Ajouter</button>
+            </div>
+        </form>
 
-        let selectedClientId = null;
-        let clients = [];
 
-        document.addEventListener("DOMContentLoaded", async () => {
-            clients = await getClients();
-        });
+        <script type="module">
 
-        // Recherche client
-        const clientInput = document.getElementById("client-search");
-        const clientResults = document.getElementById("client-results");
-        const clientSelectedDisplay = document.getElementById("client-selectionne");
+            import { loadNavbar } from '/assets/js/navbar.js';
+            import { loadHeader } from '/assets/js/header.js';
+            import { getArticles, getClients, authFetch } from '/assets/js/api.js';
+            import { injectButton } from '/assets/js/utils.js';
 
-        clientInput.addEventListener("input", () => {
-            const search = clientInput.value.toLowerCase();
-            const filtered = clients.filter(c =>
-                c.nom_client.toLowerCase().includes(search)
-            );
+            let selectedClientId = null;
+            let clients = [];
+            let articles = [];
+            let vente = [];
+            let totalVente = 0;
+            let selectedArticle = null;
 
-            clientResults.innerHTML = "";
-            filtered.forEach(c => {
-                const div = document.createElement("div");
-                div.className = "p-1 cursor-pointer hover:bg-gray-100";
-                div.textContent = c.nom_client + " - " + c.prenom_client + " - " + c.telephone;
-                div.onclick = () => {
-                    selectedClientId = c.id;
-                    clientSelectedDisplay.querySelector("span").textContent = c.nom_client + " - " + c.prenom_client;
-                    clientSelectedDisplay.classList.remove("hidden");
-                    clientResults.innerHTML = "";
-                    clientInput.value = "";
-                };
-                clientResults.appendChild(div);
-                selectedClientId = c.id;
-                console.log(selectedClientId);
-            });
-        });
-
-        // Création client (modal simplifié)
-        document.getElementById("btn-nouveau-client").addEventListener("click", async () => {
-            const nom = prompt("Nom du client :");
-            if (!nom) return;
-            const telephone = prompt("Téléphone :") || "";
-
-            try {
-                const nouveauClient = await createClient({ nom, telephone });
-                clients.push(nouveauClient);
-                selectedClientId = nouveauClient.id;
-                clientSelectedDisplay.querySelector("span").textContent = nouveauClient.nom;
-                clientSelectedDisplay.classList.remove("hidden");
-            } catch (e) {
-                alert("Erreur lors de la création du client.");
-            }
-        });
-        let articles = [];
-
-        document.addEventListener("DOMContentLoaded", async () => {
-            articles = await getArticles();
-            renderArticleList(articles);
-        });
-
-        const articleList = document.getElementById("article-list");
-        const searchInput = document.getElementById("search-input");
-        const overlay = document.getElementById("overlay");
-        const modal = document.getElementById("article-modal");
-
-        let selectedArticle = null;
-        let vente = [];
-        let totalVente = 0;
-
-        // === Remplir la liste des articles ===
-        function renderArticleList(filtered = articles) {
-            articleList.innerHTML = "";
-            filtered.forEach(article => {
-                const div = document.createElement("div");
-                div.className = "p-3 border rounded hover:bg-gray-100 cursor-pointer";
-                div.textContent = `${article.nom_article} (${article.quantite_en_stock} en stock)`;
-                div.onclick = () => openModal(article);
-                articleList.appendChild(div);
-            });
-        }
-
-        // === Recherche dynamique ===
-        searchInput.addEventListener("input", () => {
-            const term = searchInput.value.toLowerCase();
-            const filtered = articles.filter(a => a.nom_article.toLowerCase().includes(term));
-            renderArticleList(filtered);
-        });
-
-        // === Ouvrir le modal avec les détails ===
-        function openModal(article) {
-            selectedArticle = article;
-            document.getElementById("modal-nom").textContent = article.nom_article;
-            document.getElementById("modal-couleur").textContent = article.couleur;
-            document.getElementById("modal-taille").textContent = article.taille;
-            document.getElementById("modal-categorie").textContent = article.categorie;
-            document.getElementById("modal-prix").textContent = article.prix_vente_unitaire + " $";
-            document.getElementById("modal-stock").textContent = article.quantite_en_stock;
-
-            document.getElementById("input-quantite").value = "";
-            document.getElementById("input-prix-recu").value = "";
-
-            overlay.classList.remove("hidden");
-            modal.classList.remove("hidden");
-        }
-
-        // === Fermer le modal ===
-        function closeModal() {
-            overlay.classList.add("hidden");
-            modal.classList.add("hidden");
-        }
-
-        document.getElementById("btn-modal-cancel").onclick = closeModal;
-
-        // === Soumettre un article à la vente ===
-        document.getElementById("article-form").addEventListener("submit", e => {
-            e.preventDefault();
-
-            const quantite = parseInt(document.getElementById("input-quantite").value);
-            const prixRecu = parseInt(document.getElementById("input-prix-recu").value);
-
-            if (!quantite || !prixRecu || quantite <= 0 || prixRecu < 0) {
-                alert("Quantité ou prix reçu invalide.");
-                return;
-            }
-
-            if (quantite > selectedArticle.quantite) {
-                alert("Stock insuffisant !");
-                return;
-            }
-
-            // Mettre à jour la quantité restante localement
-            selectedArticle.quantite -= quantite;
-
-            const item = {
-                id: selectedArticle.id,
-                nom: selectedArticle.nom_article,
-                quantite,
-                prixRecu,
-                total: quantite * prixRecu
-            };
-            vente.push(item);
-            totalVente += item.total;
-
-            updateVenteUI();
-            closeModal();
-        });
-
-        // === Afficher les éléments ajoutés à droite ===
-        function updateVenteUI() {
-            const venteContainer = document.getElementById("vente-details");
-            venteContainer.innerHTML = "";
-
-            vente.forEach(item => {
-                const div = document.createElement("div");
-                div.className = "flex justify-between border-b py-2 text-sm";
-                div.innerHTML = `
-      <div>${item.nom}</div>
-      <div>${item.quantite} x ${item.prixRecu} $</div>
-      <div class="font-semibold">${item.total} $</div>
-    `;
-                venteContainer.appendChild(div);
+            document.addEventListener("DOMContentLoaded", async () => {
+                clients = await getClients();
+                articles = await getArticles();
+                renderArticleList(articles);
             });
 
-            document.getElementById("total-vente").textContent = totalVente + " $";
-        }
+            // 🔍 Recherche client dynamique
+            const clientInput = document.getElementById("client-search");
+            const clientResults = document.getElementById("client-results");
+            const clientSelectedDisplay = document.getElementById("client-selectionne");
 
-        // === Bouton Annuler ===
-        document.getElementById("btn-annuler").addEventListener("click", () => {
-            if (confirm("Annuler cette vente ?")) {
-                vente = [];
-                totalVente = 0;
-                renderArticleList(); // remettre les quantités
-                updateVenteUI();
-            }
-        });
+            clientInput.addEventListener("input", () => {
+                const search = clientInput.value.toLowerCase();
+                const filtered = clients.filter(c =>
+                    c.nom_client.toLowerCase().includes(search)
+                );
 
-        // === Bouton Soumettre Vente ===
-        document.getElementById("btn-soumettre-vente").addEventListener("click", async () => {
-            if (vente.length === 0) {
-                alert("Ajoutez au moins un article.");
-                return;
-            }
-
-            if (!selectedClientId) {
-                alert("Veuillez sélectionner un client.");
-                return;
-            }
-
-            const payload = {
-                client: selectedClientId,   // ✅ just an integer
-                vendeur: 5,                 // à adapter dynamiquement
-                point_de_vente: 1,         // à adapter dynamiquement
-                articles: vente.map(item => ({
-                    article: item.id,
-                    quantite: item.quantite,
-                    prix_unitaire_recu: item.prixRecu
-                }))
-            };
-
-            console.log("Payload envoyé au backend :", payload);
-
-            try {
-                const response = await fetch("http://127.0.0.1:8000/stock/vente/new/", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: "Bearer VOTRE_TOKEN_ICY" // 🔁 Mets ici ton vrai token
-                    },
-                    body: JSON.stringify(payload)
+                clientResults.innerHTML = "";
+                filtered.forEach(c => {
+                    const div = document.createElement("div");
+                    div.className = "p-1 cursor-pointer hover:bg-gray-100";
+                    div.textContent = c.nom_client + " - " + c.prenom_client + " - " + c.telephone;
+                    div.onclick = () => {
+                        selectedClientId = c.id;
+                        clientSelectedDisplay.querySelector("span").textContent = c.nom_client + " - " + c.prenom_client;
+                        clientSelectedDisplay.classList.remove("hidden");
+                        clientResults.innerHTML = "";
+                        clientInput.value = "";
+                    };
+                    clientResults.appendChild(div);
                 });
+            });
 
-                if (!response.ok) {
-                    const err = await response.json();
-                    console.error("Erreur :", err);
-                    alert("❌ Une erreur s'est produite. Vérifie les données.");
+            // ✅ Ouvrir le modal client
+            document.getElementById("btn-nouveau-client").addEventListener("click", () => {
+                document.getElementById("modal-client").classList.remove("hidden");
+                document.getElementById("overlay-client").classList.remove("hidden");
+            });
+
+            // ✅ Fermer le modal client
+            document.getElementById("cancel-client").addEventListener("click", () => {
+                document.getElementById("modal-client").classList.add("hidden");
+                document.getElementById("overlay-client").classList.add("hidden");
+            });
+
+            // ✅ Ajouter un nouveau client
+            document.getElementById("form-client").addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const nom_client = e.target.nom_client.value;
+                const prenom_client = e.target.prenom_client.value;
+                const sexe = e.target.sexe.value;
+                const adresse = e.target.adresse.value;
+                const telephone = e.target.telephone.value;
+
+                const payload = {
+                    nom_client,
+                    prenom_client,
+                    sexe,
+                    telephone,
+                    adresse
+                };
+
+                try {
+                    const res = await authFetch('http://127.0.0.1:8000/stock/client/new/', {
+                        method: 'POST',
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (res.ok) {
+                        alert("✅ Client ajouté !");
+                        document.getElementById("modal-client").classList.add("hidden");
+                        document.getElementById("overlay-client").classList.add("hidden");
+
+                        clients = await getClients(); // recharge la liste
+                    } else {
+                        const data = await res.json();
+                        console.error("Erreur:", data);
+                        alert("❌ Erreur lors de l'ajout.");
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert("❌ Erreur réseau.");
+                }
+            });
+
+
+            // 🧾 Liste des articles
+            const articleList = document.getElementById("article-list");
+            const searchInput = document.getElementById("search-input");
+            const overlay = document.getElementById("overlay");
+            const modal = document.getElementById("article-modal");
+
+            function renderArticleList(filtered = articles) {
+                articleList.innerHTML = "";
+                filtered.forEach(article => {
+                    const div = document.createElement("div");
+                    div.className = "p-3 border rounded hover:bg-gray-100 cursor-pointer";
+                    div.textContent = `${article.nom_article} (${article.quantite_en_stock} en stock)`;
+                    div.onclick = () => openModal(article);
+                    articleList.appendChild(div);
+                });
+            }
+
+            // 🔍 Recherche d’articles
+            searchInput.addEventListener("input", () => {
+                const term = searchInput.value.toLowerCase();
+                const filtered = articles.filter(a => a.nom_article.toLowerCase().includes(term));
+                renderArticleList(filtered);
+            });
+
+            // 📦 Modal d’ajout d’article
+            function openModal(article) {
+                selectedArticle = article;
+                document.getElementById("modal-nom").textContent = article.nom_article;
+                document.getElementById("modal-couleur").textContent = article.couleur;
+                document.getElementById("modal-taille").textContent = article.taille;
+                document.getElementById("modal-categorie").textContent = article.categorie;
+                document.getElementById("modal-prix").textContent = article.prix_vente_unitaire + " $";
+                document.getElementById("modal-stock").textContent = article.quantite_en_stock;
+                document.getElementById("input-quantite").value = "";
+                document.getElementById("input-prix-recu").value = "";
+
+                overlay.classList.remove("hidden");
+                modal.classList.remove("hidden");
+            }
+
+            function closeModal() {
+                overlay.classList.add("hidden");
+                modal.classList.add("hidden");
+            }
+            document.getElementById("btn-modal-cancel").onclick = closeModal;
+
+            // ➕ Ajouter un article à la vente
+            document.getElementById("article-form").addEventListener("submit", e => {
+                e.preventDefault();
+
+                const quantite = parseInt(document.getElementById("input-quantite").value);
+                const prixRecu = parseInt(document.getElementById("input-prix-recu").value);
+
+                if (!quantite || !prixRecu || quantite <= 0 || prixRecu < 0) {
+                    alert("Quantité ou prix reçu invalide.");
                     return;
                 }
 
-                alert("✅ Vente enregistrée avec succès !");
+                if (quantite > selectedArticle.quantite_en_stock) {
+                    alert("Stock insuffisant !");
+                    return;
+                }
 
-                // 🧹 Nettoyage
-                vente = [];
-                totalVente = 0;
-                selectedClientId = null;
+                selectedArticle.quantite_en_stock -= quantite;
 
-                document.getElementById("vente-details").innerHTML = "";
-                document.getElementById("total-vente").textContent = "0 $";
-                document.getElementById("client-selectionne").classList.add("hidden");
-                document.getElementById("client-selectionne").querySelector("span").textContent = "";
-                document.getElementById("client-search").value = "";
+                const item = {
+                    id: selectedArticle.id,
+                    nom: selectedArticle.nom_article,
+                    quantite,
+                    prixRecu,
+                    total: quantite * prixRecu
+                };
+                vente.push(item);
+                totalVente += item.total;
 
-            } catch (error) {
-                console.error("Erreur lors de la requête :", error);
-                alert("❌ Échec de la requête.");
+                updateVenteUI();
+                closeModal();
+            });
+
+            // 🧾 Afficher la liste d’achat
+            function updateVenteUI() {
+                const venteContainer = document.getElementById("vente-details");
+                venteContainer.innerHTML = "";
+
+                vente.forEach(item => {
+                    const div = document.createElement("div");
+                    div.className = "flex justify-between border-b py-2 text-sm";
+                    div.innerHTML = `
+            <div>${item.nom}</div>
+            <div>${item.quantite} x ${item.prixRecu} $</div>
+            <div class="font-semibold">${item.total} $</div>
+        `;
+                    venteContainer.appendChild(div);
+                });
+
+                document.getElementById("total-vente").textContent = totalVente + " $";
             }
-        });
+
+            // ❌ Annuler
+            document.getElementById("btn-annuler").addEventListener("click", () => {
+                if (confirm("Annuler cette vente ?")) {
+                    vente = [];
+                    totalVente = 0;
+                    renderArticleList();
+                    updateVenteUI();
+                }
+            });
+
+            // ✅ Soumettre vente
+            document.getElementById("btn-soumettre-vente").addEventListener("click", async () => {
+                if (vente.length === 0) {
+                    alert("Ajoutez au moins un article.");
+                    return;
+                }
+
+                if (!selectedClientId) {
+                    alert("Veuillez sélectionner un client.");
+                    return;
+                }
+
+                const payload = {
+                    client: selectedClientId,
+                    vendeur: 5,              // à adapter dynamiquement
+                    point_de_vente: 1,       // à adapter dynamiquement
+                    articles: vente.map(item => ({
+                        article: item.id,
+                        quantite: item.quantite,
+                        prix_unitaire_recu: item.prixRecu
+                    }))
+                };
+
+                try {
+                    const response = await authFetch("http://127.0.0.1:8000/stock/vente/new/", {
+                        method: "POST",
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const err = await response.json();
+                        console.error("Erreur :", err);
+                        alert("❌ Une erreur s'est produite. Vérifie les données.");
+                        return;
+                    }
+
+                    alert("✅ Vente enregistrée avec succès !");
+                    vente = [];
+                    totalVente = 0;
+                    selectedClientId = null;
+
+                    document.getElementById("vente-details").innerHTML = "";
+                    document.getElementById("total-vente").textContent = "0 $";
+                    document.getElementById("client-selectionne").classList.add("hidden");
+                    document.getElementById("client-selectionne").querySelector("span").textContent = "";
+                    document.getElementById("client-search").value = "";
+
+                } catch (error) {
+                    console.error("Erreur lors de la requête :", error);
+                    alert("❌ Échec de la requête.");
+                }
+            });
 
 
-    </script>
+
+
+        </script>
 
 </body>
 
