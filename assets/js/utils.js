@@ -39,3 +39,46 @@ export function hideSidePanel() {
   document.getElementById('side-panel').classList.add('translate-x-full');
   document.getElementById('overlay').classList.add('hidden');
 }
+
+// authGuard.js
+export async function guardAccess() {
+  const token = localStorage.getItem("access");
+  const currentPath = window.location.pathname;
+
+  if (!token) {
+    window.location.href = "/pages/login.html";
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:8000/accounts/me/", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (!res.ok) {
+      window.location.href = "/pages/login.html";
+      return;
+    }
+
+    const user = await res.json();
+
+    // 👮‍♂️ Redirection si vendeur essaie d'accéder à une autre page
+    const isVendeur = user.is_seller;
+    const isVentePage = currentPath.includes("vendre.html");
+
+    if (isVendeur && !isVentePage) {
+      alert("Accès refusé. Cette page est réservée au propriétaire.");
+      window.location.href = "/pages/vendre.html";
+    }
+
+    // 👮‍♀️ Bloquer accès à `vendre.html` pour les non-vendeurs (optionnel)
+    if (!isVendeur && isVentePage) {
+      alert("Cette page est réservée aux vendeurs.");
+      window.location.href = "/pages/dashboard.html";
+    }
+
+  } catch (error) {
+    console.error("Erreur d'accès :", error);
+    window.location.href = "/pages/login.html";
+  }
+}

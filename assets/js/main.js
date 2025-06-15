@@ -23,38 +23,63 @@ document.addEventListener("submit", async (e) => {
   e.preventDefault();
   const form = e.target;
 
-  // 🔑 Connexion
-  if (form.id === "loginForm") {
-    const email = form.email.value;
-    const password = form.password.value;
+// 🔑 Connexion
+if (form.id === "loginForm") {
+  const email = form.email.value;
+  const password = form.password.value;
 
-    try {
-      const response = await fetch(`${basic_endpoint}/api/token/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
+  try {
+    const response = await fetch(`${basic_endpoint}/api/token/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log("Connexion réussie :", data);
+
+      // Enregistrer les tokens
+      localStorage.setItem("access", data.access);
+      localStorage.setItem("refresh", data.refresh);
+
+      // Récupérer les infos de l'utilisateur connecté
+      const userRes = await fetch(`${accounts_endpoint}/me/`, {
+        method: "GET",
+        headers: { "Authorization": `Bearer ${data.access}` }
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Connexion réussie :", data);
+      if (userRes.ok) {
+        const user = await userRes.json();
+        console.log("Utilisateur :", user);
 
-        // Enregistrer les tokens
-        localStorage.setItem("access", data.access);
-        localStorage.setItem("refresh", data.refresh);
+        if (user.is_owner) {
+          // Redirection pour le propriétaire
+          window.location.href = "/pages/dashboard.html";
+        } else if (user.is_seller) {
+          // Redirection pour le vendeur vers la page de son propriétaire
+          const vendeurRes = await fetch(`${accounts_endpoint}/vendeur/owner/`, {
+            method: "GET",
+            headers: { "Authorization": `Bearer ${data.access}` }
+          });
 
-        // 🔍 Vérifie que ce log apparaît dans la console
-        console.log("Redirection vers le dashboard...");
-
-        // Rediriger
-        window.location = "/pages/dashboard.html";
+          const lien = await vendeurRes.json();
+          const ownerId = lien.proprietaire_id;
+          window.location.href = `/pages/vendre.html?owner_id=${ownerId}`;
+        } else {
+          alert("Rôle non reconnu.");
+        }
       }
-
-    } catch (error) {
-      console.error("Erreur de connexion :", error);
-      alert("Une erreur s'est produite.");
+    } else {
+      alert("Identifiants invalides.");
     }
+
+  } catch (error) {
+    console.error("Erreur de connexion :", error);
+    alert("Une erreur s'est produite.");
   }
+}
+
 
   // 📝 Inscription
   // 📝 Inscription

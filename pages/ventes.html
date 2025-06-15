@@ -72,7 +72,7 @@
   <script type="module">
     import { loadNavbar } from '/assets/js/navbar.js';
     import { loadHeader } from '/assets/js/header.js';
-    import { getVentes } from '/assets/js/api.js';
+    import { getVentes, authFetch } from '/assets/js/api.js';
     import { renderTable } from '/assets/js/table.js';
 
     // Chargement header et navbar
@@ -127,7 +127,7 @@
       form.appendChild(blocInfos);
 
       // Récupération des éléments de la vente
-      fetch(`http://127.0.0.1:8000/stock/venteitems/?vente_id=${vente.id}`)
+      authFetch(`http://127.0.0.1:8000/stock/venteitems/?vente_id=${vente.id}`)
         .then(res => res.json())
         .then(items => {
           const list = document.getElementById('vente-items-list');

@@ -91,11 +91,12 @@
     import { loadHeader } from "/assets/js/header.js";
     import { getArticles } from "/assets/js/api.js";
     import { renderTable } from "/assets/js/table.js";
-    import { injectButton } from "/assets/js/utils.js";
+    import { injectButton, guardAccess } from "/assets/js/utils.js";
 
     // Chargement header et navbar
     loadNavbar();
     loadHeader();
+    guardAccess();
 
     // Remplissage tableau
     getArticles().then((data) => {

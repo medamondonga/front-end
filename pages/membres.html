@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestion des Vendeurs</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#ED7B01',
+            darkblue: '#1C236B'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+</head>
+
+<body class="bg-gray-100 font-sans">
+  <div id="header"></div>
+  <div id="navbar"></div>
+
+  <main class="sm:pl-64 pt-[112px] p-6">
+    <div class="flex justify-between items-center pt-10 ml-6">
+      <h1 class="text-2xl font-bold text-darkblue">Liste des Vendeurs</h1>
+    </div>
+    <div id="btn-actions" class="flex justify-end mb-6 pr-4"></div>
+    <div id="vendeur-table" class="w-full"></div>
+  </main>
+
+  <!-- Modal -->
+  <div id="overlay" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 hidden"></div>
+  <div id="form-modal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg z-50 w-full max-w-md p-6 hidden">
+    <h2 id="form-title" class="text-xl font-bold text-darkblue mb-4">Ajouter un vendeur existant</h2>
+    <form id="dynamic-form" class="space-y-4">
+      <input type="email" name="vendeur_email" placeholder="Email du vendeur" required
+        class="w-full border border-gray-300 rounded px-4 py-2" />
+    </form>
+    <div class="flex justify-end mt-4 gap-3">
+      <button type="button" id="btn-cancel" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">Annuler</button>
+      <button id="submit-form" class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800 transition">Ajouter</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { loadNavbar } from '/assets/js/navbar.js';
+    import { loadHeader } from '/assets/js/header.js';
+    import { authFetch } from '/assets/js/api.js';
+    import { injectButton, guardAccess } from '/assets/js/utils.js';
+    import { renderTable } from '/assets/js/table.js';
+
+    loadNavbar();
+    loadHeader();
+    guardAccess();
+
+    // Charger les vendeurs liés au proprio
+    async function getVendeurs() {
+      const res = await authFetch("http://127.0.0.1:8000/accounts/vendeurs/");
+      return res.ok ? await res.json() : [];
+    }
+
+    getVendeurs().then(data => {
+      const columns = ["N°", "Nom", "Email"];
+      const rows = data.map((v, index) => ({
+        object: v,
+        row: [index + 1, `${v.first_name} ${v.last_name}`, v.email]
+      }));
+
+      renderTable('vendeur-table', columns, rows);
+    });
+
+    // Modal dynamique
+    function showFormModal(onSubmit) {
+      const modal = document.getElementById('form-modal');
+      const overlay = document.getElementById('overlay');
+      const form = document.getElementById('dynamic-form');
+      const submit = document.getElementById('submit-form');
+
+      submit.onclick = () => {
+        const email = form.vendeur_email.value;
+        if (!email) return alert("Veuillez entrer un email.");
+        modal.classList.add('hidden');
+        overlay.classList.add('hidden');
+        onSubmit({ vendeur_email: email });
+      };
+
+      modal.classList.remove('hidden');
+      overlay.classList.remove('hidden');
+    }
+
+    function hideFormModal() {
+      document.getElementById('form-modal').classList.add('hidden');
+      document.getElementById('overlay').classList.add('hidden');
+    }
+
+    document.getElementById('btn-cancel').addEventListener('click', hideFormModal);
+    document.getElementById('overlay').addEventListener('click', hideFormModal);
+
+    // Injecter bouton
+    injectButton('btn-actions', 'btn-add-template', () => {
+      showFormModal((data) => {
+        authFetch("http://127.0.0.1:8000/accounts/ajouter-vendeur/", {
+          method: "POST",
+          body: JSON.stringify(data)
+        }).then(res => {
+          if (res.ok) {
+            alert("Vendeur ajouté avec succès.");
+            location.reload();
+          } else {
+            res.json().then(err => alert(err.detail || "Erreur lors de l'ajout du vendeur"));
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
