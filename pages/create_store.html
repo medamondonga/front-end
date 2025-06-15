@@ -66,15 +66,16 @@
           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-primary focus:outline-none" required>
           <option disabled selected>-- Sélectionner un type --</option>
           <option value="pret-a-porter">Prêt-à-porter</option>
-          <option value="alimentation">Alimentation</option>
-          <option value="cosmetiques">Cosmétiques</option>
+          <option value="haute-couture">Haute couture</option>
+          <option value="chaussures">Chaussures</option>
           <option value="bijouterie">Bijouterie</option>
           <option value="accessoires">Accessoires</option>
-          <option value="electronique">Électronique</option>
-          <option value="chaussures">Chaussures</option>
-          <option value="supermarche">Supermarché</option>
-          <option value="librairie">Librairie</option>
+          <option value="sacs">Sacs / Maroquinerie</option>
+          <option value="lingerie">Lingerie</option>
+          <option value="mode-enfant">Mode enfant</option>
+          <option value="friperie">Friperie</option>
           <option value="autre">Autre</option>
+
         </select>
       </div>
 
@@ -105,24 +106,24 @@
 
   <script type="module">
     import { authFetch } from '/assets/js/api.js';
-  
+
     const form = document.getElementById("shopForm");
-  
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-  
+
       const formData = {
         nom_boutique: form.nom.value,
         adresse: form.adresse.value,
         // Tu peux ajouter d'autres champs si ton backend les accepte
       };
-  
+
       try {
         const res = await authFetch("http://127.0.0.1:8000/stock/boutique/", {
           method: "POST",
           body: JSON.stringify(formData),
         });
-  
+
         if (res.ok) {
           const boutique = await res.json();
           const id = boutique.id; // ou boutique.pk selon ta réponse JSON
@@ -139,7 +140,7 @@
       }
     });
   </script>
-  
+
 
 </body>
 

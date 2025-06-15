@@ -82,7 +82,7 @@
 
         // Chargement des ventes et affichage du tableau
         getDepenses().then(data => {
-            const columns = ['N°', 'Date', 'Motif', 'Motant', 'Point de vente'];
+            const columns = ['N°', 'Date', 'Motif', 'Motant'];
 
             const rows = data.map((depense, index) => ({
                 object: depense,
@@ -91,7 +91,6 @@
                     depense.date_depense,
                     depense.motif_depense,
                     depense.montant,
-                    depense.point_de_vente,
                 ]
             }));
 
@@ -122,7 +121,6 @@
     <p><strong>Date :</strong> ${depense.date_depense}</p>
     <p><strong>Motif :</strong> ${depense.motif_depense}</p>
     <p><strong>Motant :</strong> ${depense.montant} $</p>
-    <p><strong>Motant :</strong> ${depense.point_de_vente}</p>
     <hr class="my-4"/>
   `;
             form.appendChild(blocInfos);
@@ -171,10 +169,7 @@
             <span class="text-gray-700">Montant</span>
             <input type="number" name="montant" class="mt-1 block w-full border rounded px-3 py-2" required>
         </label>
-        <label class="block">
-            <span class="text-gray-700">Point de vente</span>
-            <input type="text" name="point_de_vente" class="mt-1 block w-full border rounded px-3 py-2" required>
-        </label>
+
     `;
 
             // Affichage du modal
@@ -185,12 +180,10 @@
             submit.onclick = async () => {
                 const motif = form.querySelector('input[name="motif"]').value;
                 const montant = form.querySelector('input[name="montant"]').value;
-                const pointDeVente = form.querySelector('input[name="point_de_vente"]').value;
 
                 const payload = {
                     motif_depense: motif,
                     montant: parseFloat(montant),
-                    point_de_vente: pointDeVente
                 };
 
                 try {

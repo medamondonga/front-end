@@ -113,7 +113,7 @@ if (form.id === "loginForm") {
           localStorage.setItem("refresh", tokenData.refresh);
 
           console.log("Connexion automatique réussie :", tokenData);
-          window.location.href = "/pages/welcome.html";
+          window.location.href = "/pages/princing.html";
         } else {
           alert("Inscription réussie mais connexion impossible. Veuillez vous connecter manuellement.");
           window.location.href = "/pages/login.html";
