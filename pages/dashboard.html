@@ -51,31 +51,95 @@
           <div>
             <h3 class="text-darkblue font-bold text-lg">Ventes</h3>
             <p id="stat-ventes" class="text-2xl font-semibold mt-2">...</p>
-            <p class="text-sm text-green-600 mt-1">Pour les 7 derniers jours</p>
+            <div class="relative inline-block text-left">
+              <p id="periode-ventes-text" class="text-sm text-green-600 mt-1 cursor-pointer">
+                Pour les 7 derniers jours
+                <i class='bx bx-chevron-down text-base ml-1'></i>
+              </p>
+              <div id="periode-ventes-dropdown"
+                class="origin-top-right absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10 hidden">
+                <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    role="menuitem" data-periode="aujourd-hui">Aujourd'hui</a>
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    role="menuitem" data-periode="7-jours">7 derniers jours</a>
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    role="menuitem" data-periode="14-jours">14 derniers jours</a>
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    role="menuitem" data-periode="mois">Ce mois</a>
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    role="menuitem" data-periode="3-mois">3 derniers mois</a>
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    role="menuitem" data-periode="annee">Cette année</a>
+                </div>
+              </div>
+            </div>
           </div>
           <i class='bx bxs-cart-add text-4xl text-primary'></i>
         </div>
       </div>
 
-      <!-- Bloc stat 3 -->
       <div class="bg-white rounded-2xl shadow-md p-5">
         <div class="flex items-center justify-between">
           <div>
             <h3 class="text-darkblue font-bold text-lg">Bénéfice</h3>
             <p id="stat-benefice" class="text-2xl font-semibold mt-2">...</p>
-            <p class="text-sm text-green-600 mt-1">Pour les 7 derniers jours</p>
+            <div class="relative inline-block text-left">
+              <p id="periode-benefice-text" class="text-sm text-green-600 mt-1 cursor-pointer">
+                Pour les 7 derniers jours
+                <i class='bx bx-chevron-down text-base ml-1'></i>
+              </p>
+              <div id="periode-benefice-dropdown"
+                class="origin-top-right absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10 hidden">
+                <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    role="menuitem" data-periode="aujourd-hui">Aujourd'hui</a>
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    role="menuitem" data-periode="7-jours">7 derniers jours</a>
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    role="menuitem" data-periode="14-jours">14 derniers jours</a>
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    role="menuitem" data-periode="mois">Ce mois</a>
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    role="menuitem" data-periode="3-mois">3 derniers mois</a>
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    role="menuitem" data-periode="annee">Cette année</a>
+                </div>
+              </div>
+            </div>
           </div>
           <i class='bx bx-money text-4xl text-primary'></i>
         </div>
       </div>
 
-      <!-- Bloc stat 4 -->
       <div class="bg-white rounded-2xl shadow-md p-5">
         <div class="flex items-center justify-between">
           <div>
             <h3 class="text-darkblue font-bold text-lg">Dépense</h3>
             <p id="stat-depense" class="text-2xl font-semibold mt-2">...</p>
-            <p class="text-sm text-red-600 mt-1">Pour les 7 derniers jours</p>
+            <div class="relative inline-block text-left">
+              <p id="periode-depense-text" class="text-sm text-red-600 mt-1 cursor-pointer">
+                Pour les 7 derniers jours
+                <i class='bx bx-chevron-down text-base ml-1'></i>
+              </p>
+              <div id="periode-depense-dropdown"
+                class="origin-top-right absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10 hidden">
+                <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    role="menuitem" data-periode="aujourd-hui">Aujourd'hui</a>
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    role="menuitem" data-periode="7-jours">7 derniers jours</a>
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    role="menuitem" data-periode="14-jours">14 derniers jours</a>
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    role="menuitem" data-periode="mois">Ce mois</a>
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    role="menuitem" data-periode="3-mois">3 derniers mois</a>
+                  <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    role="menuitem" data-periode="annee">Cette année</a>
+                </div>
+              </div>
+            </div>
           </div>
           <i class='bx bxs-wallet text-4xl text-primary'></i>
         </div>
@@ -125,6 +189,7 @@
     import { loadHeader } from '/assets/js/header.js';
     import { getVentes, authFetch } from '/assets/js/api.js';
     import { renderTable } from '/assets/js/table.js';
+
 
     async function chargerTopProduits() {
       try {
@@ -219,11 +284,11 @@
   `;
 
       authFetch(`http://127.0.0.1:8000/stock/venteitems/?vente_id=${vente.id}`).then((res) => {
-          if (!res.ok) {
-            throw new Error(`Erreur ${res.status}: ${res.statusText}`);
-          }
-          return res.json();
-        })
+        if (!res.ok) {
+          throw new Error(`Erreur ${res.status}: ${res.statusText}`);
+        }
+        return res.json();
+      })
         .then((items) => {
           const list = document.getElementById('vente-items-list');
           if (!list) return;
@@ -254,6 +319,118 @@
       document.getElementById('btn-cancel')?.classList.remove('hidden');
     });
 
+    // Assurez-vous que le DOM est chargé avant d'exécuter le script
+    document.addEventListener('DOMContentLoaded', () => {
+      // Fonction pour afficher/masquer un menu déroulant
+      function toggleDropdown(dropdownId) {
+        const dropdown = document.getElementById(dropdownId);
+        dropdown.classList.toggle('hidden');
+      }
+
+      // Gérer les clics en dehors des menus pour les fermer
+      document.addEventListener('click', (event) => {
+        // Liste de tous les IDs de dropdown pour vérifier si le clic est en dehors
+        const dropdownIds = ['periode-ventes-dropdown', 'periode-benefice-dropdown', 'periode-depense-dropdown'];
+        dropdownIds.forEach(id => {
+          const dropdown = document.getElementById(id);
+          const parentText = document.getElementById(id.replace('-dropdown', '-text')); // Récupère le texte déclencheur
+
+          if (dropdown && !dropdown.contains(event.target) && !parentText.contains(event.target)) {
+            dropdown.classList.add('hidden');
+          }
+        });
+      });
+
+      // Écouteurs d'événements pour les textes de période cliquables
+      document.getElementById('periode-ventes-text').addEventListener('click', (e) => {
+        e.stopPropagation(); // Empêche le clic de se propager et de fermer immédiatement le dropdown
+        toggleDropdown('periode-ventes-dropdown');
+      });
+      document.getElementById('periode-benefice-text').addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleDropdown('periode-benefice-dropdown');
+      });
+      document.getElementById('periode-depense-text').addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleDropdown('periode-depense-dropdown');
+      });
+
+      // Fonction pour charger les stats avec une période spécifique
+      async function chargerStats(periode = '7-jours') { // Default to 7-jours
+        try {
+          const response = await authFetch(`http://localhost:8000/stock/stats/?periode=${periode}`);
+          const data = await response.json();
+
+          document.getElementById('stat-articles').textContent = data.articles;
+          document.getElementById('stat-ventes').textContent = `${data.ventes.toFixed(2)}$`;
+          document.getElementById('stat-benefice').textContent = `${data.benefice.toFixed(2)}$`;
+          document.getElementById('stat-depense').textContent = `${data.depense.toFixed(2)}$`;
+
+          // --- NOUVELLE LOGIQUE ICI ---
+          // Déterminer le texte d'affichage une seule fois pour toutes les statistiques concernées
+          let displayPeriodeText = '';
+          switch (periode) {
+            case 'aujourd-hui':
+              displayPeriodeText = "aujourd'hui";
+              break;
+            case '7-jours':
+              displayPeriodeText = 'les 7 derniers jours';
+              break;
+            case '14-jours':
+              displayPeriodeText = 'les 14 derniers jours';
+              break;
+            case 'mois':
+              displayPeriodeText = 'ce mois';
+              break;
+            case '3-mois':
+              displayPeriodeText = 'les 3 derniers mois';
+              break;
+            case 'annee':
+              displayPeriodeText = 'cette année';
+              break;
+            default:
+              displayPeriodeText = 'la période sélectionnée';
+          }
+
+          // Mettre à jour le texte de la période pour TOUS les blocs de stats dynamiques
+          updatePeriodeText('ventes', displayPeriodeText);
+          updatePeriodeText('benefice', displayPeriodeText);
+          updatePeriodeText('depense', displayPeriodeText);
+
+        } catch (error) {
+          console.error('Erreur lors du chargement des stats :', error);
+        }
+      }
+
+      // Fonction pour mettre à jour le texte de la période affiché
+      function updatePeriodeText(statType, periodeText) {
+        const textElement = document.getElementById(`periode-${statType}-text`);
+        if (textElement) {
+          // Mise à jour du nœud de texte pour préserver l'icône chevron
+          textElement.childNodes[0].nodeValue = `Pour ${periodeText} `;
+        }
+      }
+
+      // Gérer les clics sur les options des menus déroulants
+      document.querySelectorAll('.relative .py-1 a').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const selectedPeriode = e.target.dataset.periode;
+          const dropdownId = e.target.closest('.py-1').parentNode.id;
+
+          // Appelle chargerStats qui s'occupera de tout mettre à jour
+          chargerStats(selectedPeriode);
+
+          // Cacher le menu déroulant après la sélection
+          toggleDropdown(dropdownId);
+
+          // Pas besoin de la logique de switch ici, elle est maintenant dans chargerStats
+        });
+      });
+
+      // Charger les stats initiales au chargement de la page (pour les 7 derniers jours par défaut)
+      chargerStats();
+    });
 
   </script>
 

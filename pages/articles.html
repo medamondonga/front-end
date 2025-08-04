@@ -55,15 +55,17 @@
       Ajouter
     </h2>
     <form id="dynamic-form" class="space-y-4"></form>
-    <div class="flex justify-end mt-4 gap-3">
-      <button type="button" id="btn-cancel"
-        class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">
-        Annuler
-      </button>
-      <button id="submit-form" class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800 transition">
-        Ajouter
-      </button>
+    <div class="flex justify-end mt-4">
+      <div class="flex gap-3">
+        <button id="delete-btn"
+          class="hidden bg-red-600 text-white px-4 py-2 rounded hover:bg-red-800 transition">Supprimer</button>
+        <button type="button" id="btn-cancel"
+          class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">Annuler</button>
+        <button id="submit-form"
+          class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800 transition">Ajouter</button>
+      </div>
     </div>
+
   </div>
 
 
@@ -92,6 +94,8 @@
     import { getArticles } from "/assets/js/api.js";
     import { renderTable } from "/assets/js/table.js";
     import { injectButton, guardAccess } from "/assets/js/utils.js";
+    import { showNotification } from "/assets/js/notificationModal.js";
+    import { showConfirmation } from "/assets/js/confirmationModal.js";
 
     // Chargement header et navbar
     loadNavbar();
@@ -124,12 +128,43 @@
       });
     });
 
-    function showFormModal(fields, onSubmit, categories = []) {
+    function showFormModal(fields, onSubmit, categories = [], data = null) {
       const modal = document.getElementById("form-modal");
       const overlay = document.getElementById("overlay");
       const form = document.getElementById("dynamic-form");
       const title = document.getElementById("form-title");
       const submit = document.getElementById("submit-form");
+      const deleteBtn = document.getElementById("delete-btn");
+
+      title.textContent = data ? "Modifier l'article" : "Ajouter un article";
+      submit.textContent = data ? "Mettre à jour" : "Ajouter";
+
+      if (data) {
+        deleteBtn.classList.remove("hidden");
+        deleteBtn.onclick = async () => { // **Marquez cette fonction comme async**
+          const userConfirmed = await showConfirmation("Voulez-vous vraiment supprimer cet article ?"); // REMPLACEMENT ICI
+
+          if (userConfirmed) { // Le code s'exécute seulement si l'utilisateur a cliqué sur "Confirmer"
+            authFetch(`http://127.0.0.1:8000/stock/article/${data.id}/`, {
+              method: "DELETE"
+            }).then((res) => {
+              if (res.ok) {
+                showNotification("Article supprimé avec succès", () => location.reload());
+              } else {
+                showNotification("Erreur lors de la suppression.");
+              }
+            }).catch(error => {
+              console.error("Erreur réseau ou autre:", error);
+              showNotification("Une erreur est survenue lors de la suppression.");
+            });
+          }
+          // Si userConfirmed est false (Annuler), on ne fait rien
+        };
+      } else {
+        deleteBtn.classList.add("hidden");
+        deleteBtn.onclick = null;
+      }
+
 
       form.innerHTML = "";
       title.textContent = "Ajouter un article";
@@ -240,15 +275,16 @@
           body: JSON.stringify(data)
         }).then(res => {
           if (res.ok) {
-            alert("Article mis à jour avec succès");
+            showNotification("Article mis à jour avec succès");
             location.reload();
           } else {
-            alert("Erreur lors de la mise à jour");
+            showNotification("Erreur lors de la mise à jour");
           }
         });
-      }, categories);
+      }, categories, article); // Ajout de article comme dernier paramètre
 
-      // 👉 Remplissage des champs après affichage du formulaire
+
+      //Remplissage des champs après affichage du formulaire
       const form = document.getElementById("dynamic-form");
 
       // Champs normaux
@@ -329,8 +365,18 @@
           body: JSON.stringify(data),
         })
           .then((res) => {
-            if (res.ok) alert("Article ajouté avec succès");
-            else alert("Erreur d’ajout");
+            if (res.ok) {
+              showNotification("Article ajouté avec succès", () => {
+                location.reload(); 
+              });
+            } else {
+              showNotification("Erreur d’ajout. Veuillez réessayer.");
+            }
+          })
+          .catch(error => {
+            // Gérer les erreurs réseau ou autres problèmes avant même d'atteindre le serveur
+            console.error("Erreur lors de l'envoi de l'article :", error);
+            showNotification("Une erreur de connexion est survenue. Veuillez vérifier votre réseau.");
           });
       }, categories);
     });

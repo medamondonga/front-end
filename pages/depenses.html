@@ -75,6 +75,7 @@
         import { loadHeader } from '/assets/js/header.js';
         import { getDepenses, authFetch } from '/assets/js/api.js';
         import { renderTable } from '/assets/js/table.js';
+        import { showNotification } from "/assets/js/notificationModal.js";
 
         // Chargement header et navbar
         loadNavbar();
@@ -194,7 +195,7 @@
 
                     if (!response.ok) throw new Error('Erreur lors de l’ajout');
 
-                    alert('Dépense ajoutée avec succès ✅');
+                    showNotification('Dépense ajoutée avec succès ✅');
 
                     // Fermer le modal
                     modal.classList.add('hidden');
@@ -204,7 +205,7 @@
                     location.reload();
 
                 } catch (error) {
-                    alert('Erreur lors de la soumission : ' + error.message);
+                    showNotification('Erreur lors de la soumission : ' + error.message);
                 }
             };
         });

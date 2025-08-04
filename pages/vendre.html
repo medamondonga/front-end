@@ -95,7 +95,7 @@
         <form id="article-form" class="mt-4 space-y-4">
             <input type="number" id="input-quantite" placeholder="Quantité à vendre" min="1"
                 class="w-full px-4 py-2 border rounded" />
-            <input type="number" id="input-prix-recu" placeholder="Prix reçu unitaire" min="0"
+            <input type="number" id="input-prix-recu" placeholder="Prix reçu unitaire" min="0" step="0.01"
                 class="w-full px-4 py-2 border rounded" />
             <div class="flex justify-end gap-3">
                 <button type="button" id="btn-modal-cancel"
@@ -137,6 +137,8 @@
             import { loadHeader } from '/assets/js/header.js';
             import { getArticles, getClients, authFetch } from '/assets/js/api.js';
             import { injectButton } from '/assets/js/utils.js';
+            import { showNotification } from "/assets/js/notificationModal.js";
+            import { showConfirmation } from "/assets/js/confirmationModal.js";
 
             let selectedClientId = null;
             let clients = [];
@@ -214,7 +216,7 @@
                     });
 
                     if (res.ok) {
-                        alert("✅ Client ajouté !");
+                        showNotification("Client ajouté !");
                         document.getElementById("modal-client").classList.add("hidden");
                         document.getElementById("overlay-client").classList.add("hidden");
 
@@ -222,11 +224,11 @@
                     } else {
                         const data = await res.json();
                         console.error("Erreur:", data);
-                        alert("❌ Erreur lors de l'ajout.");
+                        showNotification("❌ Erreur lors de l'ajout.");
                     }
                 } catch (error) {
                     console.error(error);
-                    alert("❌ Erreur réseau.");
+                    showNotification("Erreur réseau.");
                 }
             });
 
@@ -282,15 +284,15 @@
                 e.preventDefault();
 
                 const quantite = parseInt(document.getElementById("input-quantite").value);
-                const prixRecu = parseInt(document.getElementById("input-prix-recu").value);
+                const prixRecu = parseFloat(document.getElementById("input-prix-recu").value);
 
                 if (!quantite || !prixRecu || quantite <= 0 || prixRecu < 0) {
-                    alert("Quantité ou prix reçu invalide.");
+                    showNotification("Quantité ou prix reçu invalide.");
                     return;
                 }
 
                 if (quantite > selectedArticle.quantite_en_stock) {
-                    alert("Stock insuffisant !");
+                    showNotification("Stock insuffisant !");
                     return;
                 }
 
@@ -330,8 +332,9 @@
             }
 
             // ❌ Annuler
-            document.getElementById("btn-annuler").addEventListener("click", () => {
-                if (confirm("Annuler cette vente ?")) {
+            document.getElementById("btn-annuler").addEventListener("click", async () => {
+                const userConfirmed = await showConfirmation("Annuler la vente en cours ? Tous les articles seront perdus.");
+                if (userConfirmed("Annuler cette vente ?")) {
                     vente = [];
                     totalVente = 0;
                     renderArticleList();
@@ -342,12 +345,12 @@
             // ✅ Soumettre vente
             document.getElementById("btn-soumettre-vente").addEventListener("click", async () => {
                 if (vente.length === 0) {
-                    alert("Ajoutez au moins un article.");
+                    showNotification("Ajoutez au moins un article.");
                     return;
                 }
 
                 if (!selectedClientId) {
-                    alert("Veuillez sélectionner un client.");
+                    showNotification("Veuillez sélectionner un client.");
                     return;
                 }
 
@@ -370,11 +373,11 @@
                     if (!response.ok) {
                         const err = await response.json();
                         console.error("Erreur :", err);
-                        alert("❌ Une erreur s'est produite. Vérifie les données.");
+                        showNotification("Une erreur s'est produite. Vérifie les données.");
                         return;
                     }
 
-                    alert("✅ Vente enregistrée avec succès !");
+                    showNotification("Vente enregistrée avec succès !");
                     vente = [];
                     totalVente = 0;
                     selectedClientId = null;
@@ -387,7 +390,7 @@
 
                 } catch (error) {
                     console.error("Erreur lors de la requête :", error);
-                    alert("❌ Échec de la requête.");
+                    showNotification("Échec de la requête.");
                 }
             });
 

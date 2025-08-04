@@ -38,15 +38,18 @@
 
   <!-- Modal -->
   <div id="overlay" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 hidden"></div>
-  <div id="form-modal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg z-50 w-full max-w-md p-6 hidden">
+  <div id="form-modal"
+    class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg z-50 w-full max-w-md p-6 hidden">
     <h2 id="form-title" class="text-xl font-bold text-darkblue mb-4">Ajouter un vendeur existant</h2>
     <form id="dynamic-form" class="space-y-4">
       <input type="email" name="vendeur_email" placeholder="Email du vendeur" required
         class="w-full border border-gray-300 rounded px-4 py-2" />
     </form>
     <div class="flex justify-end mt-4 gap-3">
-      <button type="button" id="btn-cancel" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">Annuler</button>
-      <button id="submit-form" class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800 transition">Ajouter</button>
+      <button type="button" id="btn-cancel"
+        class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">Annuler</button>
+      <button id="submit-form"
+        class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800 transition">Ajouter</button>
     </div>
   </div>
 
@@ -56,6 +59,7 @@
     import { authFetch } from '/assets/js/api.js';
     import { injectButton, guardAccess } from '/assets/js/utils.js';
     import { renderTable } from '/assets/js/table.js';
+    import { showNotification } from "/assets/js/notificationModal.js";
 
     loadNavbar();
     loadHeader();
@@ -86,7 +90,7 @@
 
       submit.onclick = () => {
         const email = form.vendeur_email.value;
-        if (!email) return alert("Veuillez entrer un email.");
+        if (!email) return showNotification("Veuillez entrer un email.");
         modal.classList.add('hidden');
         overlay.classList.add('hidden');
         onSubmit({ vendeur_email: email });
@@ -112,14 +116,15 @@
           body: JSON.stringify(data)
         }).then(res => {
           if (res.ok) {
-            alert("Vendeur ajouté avec succès.");
+            showNotification("Vendeur ajouté avec succès.");
             location.reload();
           } else {
-            res.json().then(err => alert(err.detail || "Erreur lors de l'ajout du vendeur"));
+            res.json().then(err => showNotification(err.detail || "Erreur lors de l'ajout du vendeur"));
           }
         });
       });
     });
   </script>
 </body>
+
 </html>

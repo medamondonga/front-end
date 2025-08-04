@@ -39,13 +39,21 @@
 
   <!-- Modal -->
   <div id="overlay" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 hidden"></div>
-  <div id="form-modal" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg z-50 w-full max-w-md p-6 hidden">
+  <div id="form-modal"
+    class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg z-50 w-full max-w-md p-6 hidden">
     <h2 id="form-title" class="text-xl font-bold text-darkblue mb-4">Ajouter</h2>
     <form id="dynamic-form" class="space-y-4"></form>
     <div class="flex justify-end mt-4 gap-3">
-      <button type="button" id="btn-cancel" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">Annuler</button>
-      <button id="submit-form" class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800 transition">Ajouter</button>
+      <div class="flex gap-3">
+        <button id="delete-btn"
+          class="hidden bg-red-600 text-white px-4 py-2 rounded hover:bg-red-800 transition">Supprimer</button>
+        <button type="button" id="btn-cancel"
+          class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">Annuler</button>
+        <button id="submit-form"
+          class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800 transition">Ajouter</button>
+      </div>
     </div>
+
   </div>
 
   <script type="module">
@@ -54,6 +62,8 @@
     import { getClients, authFetch } from '/assets/js/api.js';
     import { renderTable } from '/assets/js/table.js';
     import { injectButton, guardAccess } from '/assets/js/utils.js';
+    import { showNotification } from "/assets/js/notificationModal.js";
+    import { showConfirmation } from "/assets/js/confirmationModal.js";
 
     loadNavbar();
     loadHeader();
@@ -98,10 +108,33 @@
       const form = document.getElementById('dynamic-form');
       const title = document.getElementById('form-title');
       const submit = document.getElementById('submit-form');
+      const deleteBtn = document.getElementById('delete-btn');
 
       form.innerHTML = '';
       title.textContent = data ? "Modifier le client" : "Ajouter un client";
       submit.textContent = data ? "Mettre à jour" : "Ajouter";
+
+      // Affichage du bouton supprimer uniquement en mode édition
+      if (data) {
+        deleteBtn.classList.remove('hidden');
+        deleteBtn.onclick = async () => {
+          const userConfirmed = await showConfirmation("Voulez-vous vraiment supprimer ce client?"); // REMPLACEMENT ICI
+
+          if (userConfirmed("Voulez-vous vraiment supprimer ce client ?")) {
+            authFetch(`http://127.0.0.1:8000/stock/client/${data.id}/`, {
+              method: 'DELETE',
+            }).then(res => {
+              if (res.ok) {
+                showNotification("Client supprimé avec succès");
+                location.reload();
+              } else showNotification("Erreur lors de la suppression");
+            });
+          }
+        };
+      } else {
+        deleteBtn.classList.add('hidden');
+        deleteBtn.onclick = null;
+      }
 
       fields.forEach(field => {
         let input;
@@ -140,6 +173,7 @@
       overlay.classList.remove('hidden');
     }
 
+
     function openEditModal(client) {
       showFormModal(fieldsConfig, (data) => {
         authFetch(`http://127.0.0.1:8000/stock/client/${client.id}/`, {
@@ -147,9 +181,9 @@
           body: JSON.stringify(data),
         }).then(res => {
           if (res.ok) {
-            alert('Client mis à jour avec succès');
+            showNotification('Client mis à jour avec succès');
             location.reload();
-          } else alert("Erreur lors de la mise à jour");
+          } else showNotification("Erreur lors de la mise à jour");
         });
       }, client);
     }
@@ -169,12 +203,12 @@
           body: JSON.stringify(data),
         }).then(res => {
           if (res.ok) {
-            alert('Client ajouté avec succes');
+            showNotification('Client ajouté avec succes');
             location.reload();
-          } else alert("Erreur lors de l'ajout du client");
-        });
+          } else showNotification("Erreur lors de l'ajout du client");
         });
       });
+    });
 
   </script>
 </body>
