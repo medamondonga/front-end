@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Créer point de vente</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../assets/css/style.css" rel="stylesheet">
 </head>
 
 <body class="bg-gray-100 font-sans min-h-screen pt-24">
@@ -69,20 +69,6 @@
 
     <!-- TAILWIND CONFIG + HEADER SCRIPT -->
     <script type="module">
-
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#ED7B01",
-                        darkblue: "#1C236B",
-                    },
-                    fontFamily: {
-                        sans: ["Inter", "sans-serif"],
-                    },
-                },
-            },
-        };
         import { authFetch } from '/assets/js/api.js';
         import { showNotification } from "/assets/js/notificationModal.js";
 

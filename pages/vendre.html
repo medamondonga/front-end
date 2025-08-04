@@ -5,83 +5,60 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vendre</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#ED7B01',
-                        darkblue: '#1C236B'
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif']
-                    }
-                }
-            }
-        };
-    </script>
+  <link href="../assets/css/style.css" rel="stylesheet">
 </head>
 
 <body class="bg-gray-100 font-sans">
     <div id="header"></div>
     <div id="navbar"></div>
 
-    <!-- Main container -->
-    <main class="flex h-full p-6 gap-6">
-        <!-- Left Section -->
-        <section class="w-1/2 space-y-4">
-            <input type="text" id="search-input" placeholder="Rechercher un article..."
-                class="w-full px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring focus:border-primary" />
+    <main class="sm:pl-72 mt-[105px] p-4 sm:p-6 ">
+        <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 h-full">
+            <section class="w-full sm:w-1/2 space-y-4">
+                <h2 class="text-xl font-bold text-darkblue mb-2 sm:mb-0">Articles disponibles</h2>
+                <input type="text" id="search-input" placeholder="Rechercher un article..."
+                    class="w-full px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring focus:border-primary" />
 
-            <div id="article-list" class="space-y-2 overflow-y-auto h-[75vh] border p-2 rounded bg-white shadow-sm">
-            </div>
-        </section>
+                <div id="article-list"
+                    class="space-y-2 overflow-y-auto h-[40vh] sm:h-[75vh] border p-2 rounded bg-white shadow-sm">
+                    </div>
+            </section>
 
-        <!-- Right Section -->
-        <section class="w-1/2 flex flex-col space-y-4">
-            <h2 class="text-xl font-bold text-darkblue">Détail de la vente</h2>
+            <section class="w-full sm:w-1/2 flex flex-col space-y-4">
+                <h2 class="text-xl font-bold text-darkblue">Détail de la vente</h2>
 
-            <!-- Liste des articles ajoutés -->
-            <div id="vente-details" class="space-y-2 bg-white p-4 rounded shadow-sm border h-[50vh] overflow-y-auto">
-            </div>
+                <div id="vente-details"
+                    class="space-y-2 bg-white p-4 rounded shadow-sm border h-[30vh] sm:h-[50vh] overflow-y-auto">
+                    </div>
 
-            <!-- Total -->
-            <div class="text-right font-bold text-lg">
-                Total : <span id="total-vente">0 $</span>
-            </div>
+                <div class="text-right font-bold text-lg">
+                    Total : <span id="total-vente">0 $</span>
+                </div>
 
-            <!-- Sélection du client -->
-            <div class="bg-white border p-4 rounded shadow-sm space-y-2">
-                <label for="client-search" class="text-sm text-gray-700">Client :</label>
-                <input type="text" id="client-search" placeholder="Rechercher un client..."
-                    class="w-full px-3 py-2 border rounded" />
-                <div id="client-results" class="max-h-32 overflow-y-auto text-sm text-gray-700"></div>
-                <button id="btn-nouveau-client" class="text-sm text-primary hover:underline">+ Nouveau client</button>
-                <p id="client-selectionne" class="text-sm text-green-700 font-semibold hidden">Client sélectionné :
-                    <span></span>
-                </p>
-            </div>
+                <div class="bg-white border p-4 rounded shadow-sm space-y-2">
+                    <label for="client-search" class="block text-sm text-gray-700">Client :</label>
+                    <input type="text" id="client-search" placeholder="Rechercher un client..."
+                        class="w-full px-3 py-2 border rounded" />
+                    <div id="client-results" class="max-h-32 overflow-y-auto text-sm text-gray-700 border border-gray-200 rounded p-1"></div>
+                    <button id="btn-nouveau-client" class="text-sm text-primary hover:underline">+ Nouveau client</button>
+                    <p id="client-selectionne" class="text-sm text-green-700 font-semibold hidden">Client sélectionné :
+                        <span></span>
+                    </p>
+                </div>
 
-            <!-- Boutons de soumission -->
-            <div class="flex justify-end gap-4 mt-2">
-                <button id="btn-annuler"
-                    class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700">Annuler</button>
-                <button id="btn-soumettre-vente"
-                    class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800">Soumettre Vente</button>
-                <a href="/pages/dashboard.html">
-                    <button class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800">Dashboard</button>
-                </a>
-            </div>
-        </section>
-
-
+                <div class="flex flex-col sm:flex-row justify-end gap-3 mt-2">
+                    <button id="btn-annuler"
+                        class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 w-full sm:w-auto">Annuler</button>
+                    <button id="btn-soumettre-vente"
+                        class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800 w-full sm:w-auto">Soumettre Vente</button>
+                </div>
+            </section>
+        </div>
     </main>
 
-    <!-- Modal -->
     <div id="overlay" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 hidden"></div>
     <div id="article-modal"
-        class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded shadow-lg w-full max-w-md z-50 hidden">
+        class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded shadow-lg w-11/12 max-w-md z-50 hidden">
         <h2 class="text-xl font-bold text-darkblue mb-4">Détail Article</h2>
         <div id="article-details" class="space-y-2 text-sm text-gray-700">
             <p><strong>Nom :</strong> <span id="modal-nom"></span></p>
@@ -105,11 +82,10 @@
             </div>
         </form>
     </div>
-    <div id="overlay-client" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 hidden"></div>
 
-    <!-- Modal formulaire client -->
+    <div id="overlay-client" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 hidden"></div>
     <div id="modal-client" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-  bg-white rounded-lg shadow-lg z-50 w-full max-w-md p-6 hidden">
+        bg-white rounded-lg shadow-lg z-50 w-11/12 max-w-md p-6 hidden">
         <h2 id="form-title-client" class="text-xl font-bold text-darkblue mb-4">Ajouter un client</h2>
         <form id="form-client" class="space-y-4">
             <input type="text" name="nom_client" placeholder="Nom" required class="w-full px-4 py-2 border rounded" />
@@ -129,276 +105,380 @@
                     class="bg-primary text-white px-4 py-2 rounded hover:bg-orange-800">Ajouter</button>
             </div>
         </form>
+    </div>
 
+    <script type="module">
+        import { loadNavbar } from '/assets/js/navbar.js';
+        import { loadHeader } from '/assets/js/header.js';
+        import { getArticles, getClients, authFetch } from '/assets/js/api.js';
+        import { injectButton } from '/assets/js/utils.js'; // Cette fonction n'est pas utilisée ici, peut être retirée si c'est la seule page.
+        import { showNotification } from "/assets/js/notificationModal.js";
+        import { showConfirmation } from "/assets/js/confirmationModal.js";
 
-        <script type="module">
+        let selectedClientId = null;
+        let clients = [];
+        let articles = [];
+        let vente = [];
+        let totalVente = 0;
+        let selectedArticle = null;
 
-            import { loadNavbar } from '/assets/js/navbar.js';
-            import { loadHeader } from '/assets/js/header.js';
-            import { getArticles, getClients, authFetch } from '/assets/js/api.js';
-            import { injectButton } from '/assets/js/utils.js';
-            import { showNotification } from "/assets/js/notificationModal.js";
-            import { showConfirmation } from "/assets/js/confirmationModal.js";
+        document.addEventListener("DOMContentLoaded", async () => {
+            loadNavbar(); // Assurez-vous que la navbar est chargée en premier
+            loadHeader(); // Le header également
+            clients = await getClients();
+            articles = await getArticles();
+            renderArticleList(articles);
+        });
 
-            let selectedClientId = null;
-            let clients = [];
-            let articles = [];
-            let vente = [];
-            let totalVente = 0;
-            let selectedArticle = null;
+        // 🔍 Recherche client dynamique
+        const clientInput = document.getElementById("client-search");
+        const clientResults = document.getElementById("client-results");
+        const clientSelectedDisplay = document.getElementById("client-selectionne");
 
-            document.addEventListener("DOMContentLoaded", async () => {
-                clients = await getClients();
-                articles = await getArticles();
-                renderArticleList(articles);
-            });
+        clientInput.addEventListener("input", () => {
+            const search = clientInput.value.toLowerCase();
+            const filtered = clients.filter(c =>
+                c.nom_client.toLowerCase().includes(search) ||
+                c.prenom_client.toLowerCase().includes(search) ||
+                (c.telephone && c.telephone.includes(search)) // Vérifier si le téléphone existe
+            );
 
-            // 🔍 Recherche client dynamique
-            const clientInput = document.getElementById("client-search");
-            const clientResults = document.getElementById("client-results");
-            const clientSelectedDisplay = document.getElementById("client-selectionne");
-
-            clientInput.addEventListener("input", () => {
-                const search = clientInput.value.toLowerCase();
-                const filtered = clients.filter(c =>
-                    c.nom_client.toLowerCase().includes(search)
-                );
-
-                clientResults.innerHTML = "";
+            clientResults.innerHTML = "";
+            if (search.length > 0 && filtered.length > 0) { // N'afficher les résultats que si recherche non vide et résultats
                 filtered.forEach(c => {
                     const div = document.createElement("div");
                     div.className = "p-1 cursor-pointer hover:bg-gray-100";
-                    div.textContent = c.nom_client + " - " + c.prenom_client + " - " + c.telephone;
+                    div.textContent = `${c.nom_client} ${c.prenom_client} - ${c.telephone || 'N/A'}`;
                     div.onclick = () => {
                         selectedClientId = c.id;
-                        clientSelectedDisplay.querySelector("span").textContent = c.nom_client + " - " + c.prenom_client;
+                        clientSelectedDisplay.querySelector("span").textContent = `${c.nom_client} ${c.prenom_client}`;
                         clientSelectedDisplay.classList.remove("hidden");
-                        clientResults.innerHTML = "";
-                        clientInput.value = "";
+                        clientResults.innerHTML = ""; // Cacher les résultats après sélection
+                        clientInput.value = ""; // Vider l'input de recherche
                     };
                     clientResults.appendChild(div);
                 });
-            });
+            }
+        });
 
-            // ✅ Ouvrir le modal client
-            document.getElementById("btn-nouveau-client").addEventListener("click", () => {
-                document.getElementById("modal-client").classList.remove("hidden");
-                document.getElementById("overlay-client").classList.remove("hidden");
-            });
-
-            // ✅ Fermer le modal client
-            document.getElementById("cancel-client").addEventListener("click", () => {
-                document.getElementById("modal-client").classList.add("hidden");
-                document.getElementById("overlay-client").classList.add("hidden");
-            });
-
-            // ✅ Ajouter un nouveau client
-            document.getElementById("form-client").addEventListener("submit", async (e) => {
-                e.preventDefault();
-                const nom_client = e.target.nom_client.value;
-                const prenom_client = e.target.prenom_client.value;
-                const sexe = e.target.sexe.value;
-                const adresse = e.target.adresse.value;
-                const telephone = e.target.telephone.value;
-
-                const payload = {
-                    nom_client,
-                    prenom_client,
-                    sexe,
-                    telephone,
-                    adresse
-                };
-
-                try {
-                    const res = await authFetch('http://127.0.0.1:8000/stock/client/new/', {
-                        method: 'POST',
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (res.ok) {
-                        showNotification("Client ajouté !");
-                        document.getElementById("modal-client").classList.add("hidden");
-                        document.getElementById("overlay-client").classList.add("hidden");
-
-                        clients = await getClients(); // recharge la liste
-                    } else {
-                        const data = await res.json();
-                        console.error("Erreur:", data);
-                        showNotification("❌ Erreur lors de l'ajout.");
-                    }
-                } catch (error) {
-                    console.error(error);
-                    showNotification("Erreur réseau.");
-                }
-            });
+        // Cacher les résultats de recherche client si l'utilisateur clique en dehors
+        document.addEventListener('click', (e) => {
+            if (!clientInput.contains(e.target) && !clientResults.contains(e.target)) {
+                clientResults.innerHTML = "";
+            }
+        });
 
 
-            // 🧾 Liste des articles
-            const articleList = document.getElementById("article-list");
-            const searchInput = document.getElementById("search-input");
-            const overlay = document.getElementById("overlay");
-            const modal = document.getElementById("article-modal");
+        // ✅ Ouvrir le modal client
+        document.getElementById("btn-nouveau-client").addEventListener("click", () => {
+            document.getElementById("modal-client").classList.remove("hidden");
+            document.getElementById("overlay-client").classList.remove("hidden");
+        });
 
-            function renderArticleList(filtered = articles) {
-                articleList.innerHTML = "";
-                filtered.forEach(article => {
-                    const div = document.createElement("div");
-                    div.className = "p-3 border rounded hover:bg-gray-100 cursor-pointer";
-                    div.textContent = `${article.nom_article} (${article.quantite_en_stock} en stock)`;
-                    div.onclick = () => openModal(article);
-                    articleList.appendChild(div);
+        // ✅ Fermer le modal client
+        document.getElementById("cancel-client").addEventListener("click", () => {
+            document.getElementById("modal-client").classList.add("hidden");
+            document.getElementById("overlay-client").classList.add("hidden");
+        });
+
+        // ✅ Ajouter un nouveau client
+        document.getElementById("form-client").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const nom_client = e.target.nom_client.value;
+            const prenom_client = e.target.prenom_client.value;
+            const sexe = e.target.sexe.value;
+            const adresse = e.target.adresse.value;
+            const telephone = e.target.telephone.value;
+
+            const payload = {
+                nom_client,
+                prenom_client,
+                sexe,
+                telephone,
+                adresse
+            };
+
+            try {
+                const res = await authFetch('http://127.0.0.1:8000/stock/client/new/', {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
                 });
-            }
 
-            // 🔍 Recherche d’articles
-            searchInput.addEventListener("input", () => {
-                const term = searchInput.value.toLowerCase();
-                const filtered = articles.filter(a => a.nom_article.toLowerCase().includes(term));
-                renderArticleList(filtered);
+                if (res.ok) {
+                    showNotification("Client ajouté !");
+                    document.getElementById("modal-client").classList.add("hidden");
+                    document.getElementById("overlay-client").classList.add("hidden");
+
+                    clients = await getClients(); // recharge la liste
+                    e.target.reset(); // Réinitialiser le formulaire
+                } else {
+                    const data = await res.json();
+                    console.error("Erreur:", data);
+                    showNotification("❌ Erreur lors de l'ajout. " + (data.detail || JSON.stringify(data)));
+                }
+            } catch (error) {
+                console.error(error);
+                showNotification("Erreur réseau lors de l'ajout du client.");
+            }
+        });
+
+
+        // 🧾 Liste des articles
+        const articleList = document.getElementById("article-list");
+        const searchInput = document.getElementById("search-input");
+        const overlay = document.getElementById("overlay");
+        const modal = document.getElementById("article-modal");
+
+        function renderArticleList(filtered = articles) {
+            articleList.innerHTML = "";
+            if (filtered.length === 0) {
+                articleList.innerHTML = '<p class="text-gray-500 p-4">Aucun article trouvé.</p>';
+                return;
+            }
+            filtered.forEach(article => {
+                const div = document.createElement("div");
+                div.className = "p-3 border rounded hover:bg-gray-100 cursor-pointer";
+                div.textContent = `${article.nom_article} (${article.quantite_en_stock} en stock)`;
+                div.onclick = () => openModal(article);
+                articleList.appendChild(div);
             });
+        }
 
-            // 📦 Modal d’ajout d’article
-            function openModal(article) {
-                selectedArticle = article;
-                document.getElementById("modal-nom").textContent = article.nom_article;
-                document.getElementById("modal-couleur").textContent = article.couleur;
-                document.getElementById("modal-taille").textContent = article.taille;
-                document.getElementById("modal-categorie").textContent = article.categorie;
-                document.getElementById("modal-prix").textContent = article.prix_vente_unitaire + " $";
-                document.getElementById("modal-stock").textContent = article.quantite_en_stock;
-                document.getElementById("input-quantite").value = "";
-                document.getElementById("input-prix-recu").value = "";
+        // 🔍 Recherche d’articles
+        searchInput.addEventListener("input", () => {
+            const term = searchInput.value.toLowerCase();
+            const filtered = articles.filter(a =>
+                a.nom_article.toLowerCase().includes(term) ||
+                a.couleur.toLowerCase().includes(term) ||
+                a.taille.toLowerCase().includes(term) ||
+                a.categorie.toLowerCase().includes(term)
+            );
+            renderArticleList(filtered);
+        });
 
-                overlay.classList.remove("hidden");
-                modal.classList.remove("hidden");
+        // 📦 Modal d’ajout d’article
+        function openModal(article) {
+            selectedArticle = article;
+            document.getElementById("modal-nom").textContent = article.nom_article;
+            document.getElementById("modal-couleur").textContent = article.couleur;
+            document.getElementById("modal-taille").textContent = article.taille;
+            document.getElementById("modal-categorie").textContent = article.categorie;
+            document.getElementById("modal-prix").textContent = article.prix_vente_unitaire + " $";
+            document.getElementById("modal-stock").textContent = article.quantite_en_stock;
+            document.getElementById("input-quantite").value = "";
+            document.getElementById("input-prix-recu").value = "";
+
+            overlay.classList.remove("hidden");
+            modal.classList.remove("hidden");
+            // Ajuster la taille de la modale pour les petits écrans
+            // w-11/12 permet d'occuper 11/12 de la largeur de l'écran
+            // max-w-md limite à une largeur maximale
+        }
+
+        function closeModal() {
+            overlay.classList.add("hidden");
+            modal.classList.add("hidden");
+        }
+        document.getElementById("btn-modal-cancel").onclick = closeModal;
+
+        // ➕ Ajouter un article à la vente
+        document.getElementById("article-form").addEventListener("submit", e => {
+            e.preventDefault();
+
+            const quantiteInput = document.getElementById("input-quantite");
+            const prixRecuInput = document.getElementById("input-prix-recu");
+
+            const quantite = parseInt(quantiteInput.value);
+            const prixRecu = parseFloat(prixRecuInput.value);
+
+            if (isNaN(quantite) || isNaN(prixRecu) || quantite <= 0 || prixRecu <= 0) { // prixRecu doit être > 0 aussi
+                showNotification("Veuillez entrer une quantité et un prix valides.");
+                return;
             }
 
-            function closeModal() {
-                overlay.classList.add("hidden");
-                modal.classList.add("hidden");
+            if (quantite > selectedArticle.quantite_en_stock) {
+                showNotification(`Stock insuffisant ! Il ne reste que ${selectedArticle.quantite_en_stock} de cet article.`);
+                return;
             }
-            document.getElementById("btn-modal-cancel").onclick = closeModal;
 
-            // ➕ Ajouter un article à la vente
-            document.getElementById("article-form").addEventListener("submit", e => {
-                e.preventDefault();
+            // Vérifier si l'article est déjà dans la vente
+            const existingItemIndex = vente.findIndex(item => item.id === selectedArticle.id);
 
-                const quantite = parseInt(document.getElementById("input-quantite").value);
-                const prixRecu = parseFloat(document.getElementById("input-prix-recu").value);
-
-                if (!quantite || !prixRecu || quantite <= 0 || prixRecu < 0) {
-                    showNotification("Quantité ou prix reçu invalide.");
-                    return;
-                }
-
-                if (quantite > selectedArticle.quantite_en_stock) {
-                    showNotification("Stock insuffisant !");
-                    return;
-                }
-
-                selectedArticle.quantite_en_stock -= quantite;
-
+            if (existingItemIndex > -1) {
+                // Si l'article existe déjà, mettre à jour la quantité et le prix
+                const existingItem = vente[existingItemIndex];
+                existingItem.quantite += quantite;
+                existingItem.prixRecu = prixRecu; // Mettre à jour le prix reçu si différent
+                existingItem.total = existingItem.quantite * existingItem.prixRecu;
+            } else {
+                // Sinon, ajouter le nouvel article
                 const item = {
                     id: selectedArticle.id,
                     nom: selectedArticle.nom_article,
                     quantite,
                     prixRecu,
-                    total: quantite * prixRecu
+                    total: quantite * prixRecu,
+                    stockInitial: selectedArticle.quantite_en_stock + quantite // Pour annuler correctement
                 };
                 vente.push(item);
-                totalVente += item.total;
-
-                updateVenteUI();
-                closeModal();
-            });
-
-            // 🧾 Afficher la liste d’achat
-            function updateVenteUI() {
-                const venteContainer = document.getElementById("vente-details");
-                venteContainer.innerHTML = "";
-
-                vente.forEach(item => {
-                    const div = document.createElement("div");
-                    div.className = "flex justify-between border-b py-2 text-sm";
-                    div.innerHTML = `
-            <div>${item.nom}</div>
-            <div>${item.quantite} x ${item.prixRecu} $</div>
-            <div class="font-semibold">${item.total} $</div>
-        `;
-                    venteContainer.appendChild(div);
-                });
-
-                document.getElementById("total-vente").textContent = totalVente + " $";
             }
 
-            // ❌ Annuler
-            document.getElementById("btn-annuler").addEventListener("click", async () => {
-                const userConfirmed = await showConfirmation("Annuler la vente en cours ? Tous les articles seront perdus.");
-                if (userConfirmed("Annuler cette vente ?")) {
-                    vente = [];
-                    totalVente = 0;
-                    renderArticleList();
-                    updateVenteUI();
-                }
+            // Mettre à jour le stock de l'article dans la liste locale (articles)
+            const articleInArticles = articles.find(a => a.id === selectedArticle.id);
+            if (articleInArticles) {
+                articleInArticles.quantite_en_stock -= quantite;
+            }
+
+            totalVente = vente.reduce((sum, item) => sum + item.total, 0); // Recalculer le total
+            updateVenteUI();
+            closeModal();
+            renderArticleList(articles); // Mettre à jour la liste des articles disponibles
+        });
+
+        // 🧾 Afficher la liste d’achat
+        function updateVenteUI() {
+            const venteContainer = document.getElementById("vente-details");
+            venteContainer.innerHTML = "";
+
+            if (vente.length === 0) {
+                venteContainer.innerHTML = '<p class="text-gray-500 p-4">Aucun article dans la vente.</p>';
+            }
+
+            vente.forEach((item, index) => {
+                const div = document.createElement("div");
+                div.className = "flex justify-between items-center border-b py-2 text-sm";
+                div.innerHTML = `
+                    <div>${item.nom}</div>
+                    <div>${item.quantite} x ${item.prixRecu} $</div>
+                    <div class="font-semibold">${item.total} $</div>
+                    <button class="text-red-500 hover:text-red-700 ml-2" data-index="${index}" data-action="remove-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                `;
+                venteContainer.appendChild(div);
             });
 
-            // ✅ Soumettre vente
-            document.getElementById("btn-soumettre-vente").addEventListener("click", async () => {
-                if (vente.length === 0) {
-                    showNotification("Ajoutez au moins un article.");
-                    return;
-                }
+            // Ajouter les écouteurs pour les boutons de suppression d'article
+            venteContainer.querySelectorAll('[data-action="remove-item"]').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const indexToRemove = parseInt(e.currentTarget.dataset.index);
+                    removeItemFromVente(indexToRemove);
+                });
+            });
 
-                if (!selectedClientId) {
-                    showNotification("Veuillez sélectionner un client.");
-                    return;
-                }
+            document.getElementById("total-vente").textContent = totalVente.toFixed(2) + " $"; // Formater le total
+        }
 
-                const payload = {
-                    client: selectedClientId,
-                    vendeur: 5,              // à adapter dynamiquement
-                    articles: vente.map(item => ({
-                        article: item.id,
-                        quantite: item.quantite,
-                        prix_unitaire_recu: item.prixRecu
-                    }))
-                };
+        // Supprimer un article de la vente
+        function removeItemFromVente(indexToRemove) {
+            const itemToRemove = vente[indexToRemove];
 
-                try {
-                    const response = await authFetch("http://127.0.0.1:8000/stock/vente/new/", {
-                        method: "POST",
-                        body: JSON.stringify(payload)
-                    });
+            // Rétablir le stock de l'article dans la liste 'articles'
+            const articleInArticles = articles.find(a => a.id === itemToRemove.id);
+            if (articleInArticles) {
+                articleInArticles.quantite_en_stock += itemToRemove.quantite;
+            }
 
-                    if (!response.ok) {
-                        const err = await response.json();
-                        console.error("Erreur :", err);
-                        showNotification("Une erreur s'est produite. Vérifie les données.");
-                        return;
+            totalVente -= itemToRemove.total;
+            vente.splice(indexToRemove, 1); // Supprimer l'article du tableau vente
+
+            updateVenteUI(); // Mettre à jour l'interface utilisateur de la vente
+            renderArticleList(articles); // Mettre à jour la liste des articles disponibles
+        }
+
+        // ❌ Annuler la vente
+        document.getElementById("btn-annuler").addEventListener("click", async () => {
+            const userConfirmed = await showConfirmation("Annuler la vente en cours ? Tous les articles seront retirés.");
+            if (userConfirmed) { // showConfirmation renvoie directement true/false
+                // Rétablir le stock de tous les articles ajoutés à la vente
+                vente.forEach(item => {
+                    const originalArticle = articles.find(a => a.id === item.id);
+                    if (originalArticle) {
+                        originalArticle.quantite_en_stock += item.quantite;
                     }
+                });
 
-                    showNotification("Vente enregistrée avec succès !");
-                    vente = [];
-                    totalVente = 0;
-                    selectedClientId = null;
+                vente = [];
+                totalVente = 0;
+                selectedClientId = null;
 
-                    document.getElementById("vente-details").innerHTML = "";
-                    document.getElementById("total-vente").textContent = "0 $";
-                    document.getElementById("client-selectionne").classList.add("hidden");
-                    document.getElementById("client-selectionne").querySelector("span").textContent = "";
-                    document.getElementById("client-search").value = "";
+                renderArticleList(articles); // Met à jour la liste des articles avec le stock réinitialisé
+                updateVenteUI(); // Vide la liste de vente
+                document.getElementById("client-selectionne").classList.add("hidden");
+                document.getElementById("client-selectionne").querySelector("span").textContent = "";
+                document.getElementById("client-search").value = "";
+                showNotification("Vente annulée avec succès.");
+            }
+        });
 
-                } catch (error) {
-                    console.error("Erreur lors de la requête :", error);
-                    showNotification("Échec de la requête.");
+        // ✅ Soumettre vente
+        document.getElementById("btn-soumettre-vente").addEventListener("click", async () => {
+            if (vente.length === 0) {
+                showNotification("Ajoutez au moins un article pour soumettre la vente.");
+                return;
+            }
+
+            if (!selectedClientId) {
+                showNotification("Veuillez sélectionner un client.");
+                return;
+            }
+
+            const userConfirmed = await showConfirmation("Confirmer la soumission de cette vente ?");
+            if (!userConfirmed) {
+                return; // L'utilisateur a annulé
+            }
+
+            // Ici, vous devrez probablement obtenir l'ID du vendeur connecté
+            // Pour l'instant, je garde la valeur statique (5), mais pensez à la dynamiser.
+            const vendeurId = 5; // Remplacez par l'ID réel du vendeur connecté
+
+            const payload = {
+                client: selectedClientId,
+                vendeur: vendeurId,
+                articles: vente.map(item => ({
+                    article: item.id,
+                    quantite: item.quantite,
+                    prix_unitaire_recu: item.prixRecu
+                }))
+            };
+
+            try {
+                const response = await authFetch("http://127.0.0.1:8000/stock/vente/new/", {
+                    method: "POST",
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    console.error("Erreur API lors de la soumission de la vente:", err);
+                    showNotification("Une erreur s'est produite lors de la soumission. " + (err.detail || JSON.stringify(err)));
+                    return;
                 }
-            });
 
+                showNotification("Vente enregistrée avec succès !");
+                // Réinitialiser l'état de la page après une vente réussie
+                vente = [];
+                totalVente = 0;
+                selectedClientId = null;
 
+                document.getElementById("vente-details").innerHTML = "";
+                document.getElementById("total-vente").textContent = "0 $";
+                document.getElementById("client-selectionne").classList.add("hidden");
+                document.getElementById("client-selectionne").querySelector("span").textContent = "";
+                document.getElementById("client-search").value = "";
 
+                // Recharger les articles pour refléter les quantités finales après vente
+                articles = await getArticles();
+                renderArticleList(articles);
 
-        </script>
-
+            } catch (error) {
+                console.error("Erreur réseau ou autre lors de la soumission de la vente :", error);
+                showNotification("Échec de la soumission de la vente en raison d'un problème réseau.");
+            }
+        });
+    </script>
 </body>
 
 </html>
