@@ -43,6 +43,7 @@ if (form.id === "loginForm") {
       localStorage.setItem("access", data.access);
       localStorage.setItem("refresh", data.refresh);
 
+
       // Récupérer les infos de l'utilisateur connecté
       const userRes = await fetch(`${accounts_endpoint}/me/`, {
         method: "GET",
@@ -54,6 +55,7 @@ if (form.id === "loginForm") {
         console.log("Utilisateur :", user);
 
         if (user.is_owner) {
+          localStorage.setItem('is_owner', data.is_owner);
           // Redirection pour le propriétaire
           window.location.href = "/pages/dashboard.html";
         } else if (user.is_seller) {

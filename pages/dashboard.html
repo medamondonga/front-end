@@ -166,7 +166,9 @@
         class="hidden bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">Annuler</button>
     </div>
   </div>
+  
   </main>
+<div id="footer"></div>
 
   <!-- Scripts JS -->
   <script type="module">
@@ -174,6 +176,7 @@
     import { loadHeader } from '/assets/js/header.js';
     import { getVentes, authFetch } from '/assets/js/api.js';
     import { renderTable } from '/assets/js/table.js';
+
 
 
     async function chargerTopProduits() {
@@ -218,6 +221,7 @@
     loadHeader();
     chargerTopProduits();
     chargerStats();
+
 
 
 

@@ -82,3 +82,4 @@ export async function guardAccess() {
     window.location.href = "/pages/login.html";
   }
 }
+

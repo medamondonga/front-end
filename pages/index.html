@@ -616,7 +616,7 @@
       </button>
     </section>
     <!--Footer-->
-    <footer class="bg-white">
+    <footer id="footer" class="bg-white">
       <div class="container mx-auto px-8">
         <div class="w-full flex flex-col md:flex-row py-6">
           <div class="flex-1 mb-6 text-black">
@@ -692,13 +692,15 @@
     <!-- jQuery if you need it
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   -->
-    <script>
+    <script type="module">
+          import { loadFooter } from "/assets/js/footer.js"; 
       var scrollpos = window.scrollY;
       var header = document.getElementById("header");
       var navcontent = document.getElementById("nav-content");
       var navaction = document.getElementById("navAction");
       var brandname = document.getElementById("brandname");
       var toToggle = document.querySelectorAll(".toggleColour");
+          loadFooter();
 
       document.addEventListener("scroll", function () {
         /*Apply classes for slide in bar*/

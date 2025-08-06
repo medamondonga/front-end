@@ -21,11 +21,11 @@
 
         <!-- En-tête titre + bouton aligné à droite -->
         <div class="flex justify-between items-center pt-10 ml-6 mr-6">
-            <h1 class="text-2xl font-bold text-darkblue">Historique des depenses</h1>
+            <h1 class="text-2xl font-bold text-darkblue">Historique</h1>
 
             <button id="btn-open-modal"
                 class="bg-primary text-white px-6 py-2 rounded-2xl shadow hover:bg-orange-800 transition font-semibold">
-                Ajouter une depense
+                Ajouter
             </button>
 
 
@@ -178,7 +178,7 @@
 
                     if (!response.ok) throw new Error('Erreur lors de l’ajout');
 
-                    showNotification('Dépense ajoutée avec succès ✅');
+                    showNotification('Dépense ajoutée avec succès');
 
                     // Fermer le modal
                     modal.classList.add('hidden');

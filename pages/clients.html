@@ -103,7 +103,7 @@
         deleteBtn.onclick = async () => {
           const userConfirmed = await showConfirmation("Voulez-vous vraiment supprimer ce client?"); // REMPLACEMENT ICI
 
-          if (userConfirmed("Voulez-vous vraiment supprimer ce client ?")) {
+          if (userConfirmed) {
             authFetch(`http://127.0.0.1:8000/stock/client/${data.id}/`, {
               method: 'DELETE',
             }).then(res => {

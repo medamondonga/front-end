@@ -74,8 +74,8 @@
         if (data) {
           deleteBtn.classList.remove('hidden');
           deleteBtn.onclick = async() => {
-            const userConfirmed = await showConfirmation("Voulez-vous vraiment supprimer cet article ?"); // REMPLACEMENT ICI
-            if (userConfirmed("Voulez-vous vraiment supprimer cette catégorie ?")) {
+            const userConfirmed = await showConfirmation("Voulez-vous vraiment supprimer cet article ?");
+            if (userConfirmed) {
               authFetch(`http://127.0.0.1:8000/stock/categorie/${data.id}/`, {
                 method: 'DELETE',
               }).then(res => {
